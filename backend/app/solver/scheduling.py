@@ -54,6 +54,14 @@ PENALTY: dict[str, int] = {
     "max_consecutive": 40,
 }
 
+# 目标项权重。数值大小关系决定了优化优先级：
+#   总人力成本(20) > 最小扰动(15) > 公平性(10) > 个人偏好(3)
+# 「最小扰动」只在 what-if 重排时生效（给了 baseline 才会有）。
+COST_TOTAL = 20
+COST_STABILITY = 15
+COST_FAIRNESS = 10
+COST_PREFERENCE = 3
+
 # 冲突诊断后的中文建议
 RULE_ADVICE: dict[str, str] = {
     "demand": "降低该班次的人数需求，或增加可用人手。",
@@ -239,11 +247,17 @@ class _Built:
         self.objective_terms: list[Any] = []
 
 
-def _build(problem: SchedulingProblem, *, soft: bool) -> _Built:
+def _build(
+    problem: SchedulingProblem,
+    *,
+    soft: bool,
+    baseline: list[Assignment] | None = None,
+) -> _Built:
     """构建 CP-SAT 模型。
 
     soft=False → 每类规则一个假设字面量，用于可行性判定与**类别级**冲突诊断。
     soft=True  → 规则转成带罚分的软约束，用于求「违约最小的方案」。
+    baseline   → 传入上一版方案时，加入「最小扰动」目标：尽量少改已排好的班。
     """
     b = _Built()
     model = b.model
@@ -372,6 +386,22 @@ def _build(problem: SchedulingProblem, *, soft: bool) -> _Built:
                 else:
                     model.Add(load <= k).OnlyEnforceIf(gate("max_consecutive"))
 
+    # ---------- 目标 0：总人力成本 ----------
+    # 需求约束是「至少 N 人」，不是「恰好 N 人」，所以必须显式惩罚多排的班次。
+    # 否则「每人 4 天」和「每人 5 天」在目标函数里同样最优，
+    # 求解器会随性地多排人 —— 同一个问题两次求解给出不同的排班数。
+    if b.work:
+        b.objective_terms.append(sum(b.work.values()) * COST_TOTAL)
+
+    # ---------- 目标 0.5：最小扰动（只在有 baseline 时生效） ----------
+    # 业务上没人接受「一个人请假一天，整个班表全部重排」。
+    # 保留原方案里能保留的排班，只改必须改的那几处。
+    if baseline and b.x:
+        keep = {(a.employee_id, a.date, a.shift_id) for a in baseline}
+        for key, var in b.x.items():
+            neg = var.Not() if key in keep else var
+            b.objective_terms.append(neg * COST_STABILITY)
+
     # ---------- 目标 1：工作量公平（最大-最小上班天数差） ----------
     if len(problem.employees) >= 2 and n_days > 0:
         loads = [sum(b.work[(e.id, d)] for d in dates) for e in problem.employees]
@@ -379,12 +409,12 @@ def _build(problem: SchedulingProblem, *, soft: bool) -> _Built:
         mn = model.NewIntVar(0, n_days, "min_load")
         model.AddMaxEquality(mx, loads)
         model.AddMinEquality(mn, loads)
-        b.objective_terms.append((mx - mn) * 10)
+        b.objective_terms.append((mx - mn) * COST_FAIRNESS)
 
     # ---------- 目标 2：尽量满足个人休息偏好（软） ----------
     for e in problem.employees:
         for d in sorted(set(e.preferred_off_dates) & date_set):
-            b.objective_terms.append(b.work[(e.id, d)] * 3)
+            b.objective_terms.append(b.work[(e.id, d)] * COST_PREFERENCE)
 
     # ---------- 汇总目标 ----------
     model.Minimize(sum(b.penalty_terms) + sum(b.objective_terms))
@@ -581,8 +611,13 @@ def solve(
     time_limit: float = 15.0,
     workers: int = 8,
     auto_relax: bool = True,
+    baseline: list[Assignment] | None = None,
 ) -> SolveResult:
-    """求解排班问题；无解时自动诊断冲突并给出松弛方案。"""
+    """求解排班问题；无解时自动诊断冲突并给出松弛方案。
+
+    baseline：传入上一版方案时启用「最小扰动」目标 —— 尽量少改已排好的班次。
+    这在 what-if 场景里很关键：业务上没人接受「一个人请假一天，整个班表全部重排」。
+    """
     if not problem.employees or not problem.shifts or not problem.dates:
         return SolveResult(
             status="MODEL_INVALID",
@@ -592,7 +627,7 @@ def solve(
     t0 = time.perf_counter()
 
     # ---------- 第一段：硬约束求解 ----------
-    built = _build(problem, soft=False)
+    built = _build(problem, soft=False, baseline=baseline)
     solver = _new_solver(time_limit, workers)
     if built.assumptions:
         built.model.AddAssumptions(built.assumptions)
@@ -650,7 +685,7 @@ def solve(
 
     # ---------- 第三段：自动松弛，求违约最小的方案 ----------
     t1 = time.perf_counter()
-    relaxed = _build(problem, soft=True)
+    relaxed = _build(problem, soft=True, baseline=baseline)
     rsolver = _new_solver(time_limit, workers)
     rstatus = rsolver.Solve(relaxed.model)
     r_elapsed = time.perf_counter() - t1
