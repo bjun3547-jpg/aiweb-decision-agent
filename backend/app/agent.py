@@ -27,7 +27,14 @@ from pydantic import BaseModel, Field
 
 from app import prompts
 from app.llm import LLMClient, LLMError
-from app.schemas import ExtractionResult, SchedulingProblem, SolveResult
+from app.schemas import (
+    AgentStep,
+    ExtractionResult,
+    SchedulingProblem,
+    SolveResult,
+    WhatIfPatch,
+    WhatIfResult,
+)
 from app.solver.scheduling import (
     RULE_LABELS,
     render_schedule_table,
@@ -35,6 +42,7 @@ from app.solver.scheduling import (
     solve,
     validate_problem,
 )
+from app.whatif import apply_patch, compute_diff
 
 
 # --------------------------------------------------------------------------- #
@@ -67,16 +75,6 @@ def number_guard(narrative: str, allowed_text: str) -> list[str]:
 # --------------------------------------------------------------------------- #
 # 运行轨迹
 # --------------------------------------------------------------------------- #
-
-
-class AgentStep(BaseModel):
-    """Agent 的一步，供前端展示 trace。"""
-
-    key: str
-    name: str
-    status: Literal["pending", "running", "ok", "warn", "error"] = "pending"
-    detail: str = ""
-    duration_ms: int = 0
 
 
 class AgentRun(BaseModel):
@@ -320,4 +318,187 @@ class DecisionAgent:
             exp.duration_ms = int((time.perf_counter() - t2) * 1000)
 
         run.ok = bool(result.assignments) or result.status in ("OPTIMAL", "FEASIBLE")
+        return run
+
+    # ------------------------------------------------------------------ #
+    # What-if：如果……会怎样
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _context_block(problem: SchedulingProblem) -> str:
+        """把当前问题压缩成一段紧凑上下文，喂给「变更意图解析器」。"""
+        lines = [f"计划期：{problem.dates[0]} ~ {problem.dates[-1]}（共 {len(problem.dates)} 天）"]
+        lines.append(
+            "员工：" + "、".join(
+                f"{e.id}={e.name}" + (f"[{'/'.join(e.skills)}]" if e.skills else "")
+                + (f"(不可用:{','.join(e.unavailable_dates)})" if e.unavailable_dates else "")
+                for e in problem.employees
+            )
+        )
+        lines.append(
+            "班次：" + "、".join(
+                f"{s.id}={s.name}"
+                + (f"(需{s.required_skill})" if s.required_skill else "")
+                for s in problem.shifts
+            )
+        )
+        lines.append(
+            "规则：每人最多 "
+            f"{problem.rules.max_shifts_per_employee} 天，每周至少休 "
+            f"{problem.rules.min_rest_days_per_week} 天，连续工作不超过 "
+            f"{problem.rules.max_consecutive_work_days} 天"
+        )
+        by_shift: dict[str, int] = {}
+        for d in problem.demand:
+            by_shift[d.shift_id] = max(by_shift.get(d.shift_id, 0), d.headcount)
+        lines.append("人数需求（每日峰值）：" + "、".join(f"{k}={v}人" for k, v in by_shift.items()))
+        return "\n".join(lines)
+
+    async def whatif(
+        self, problem: SchedulingProblem, text: str, *, skip_narrative: bool = False
+    ) -> WhatIfResult:
+        """对现有方案做「如果……会怎样」：解析变更 → 应用 → 重解 → 对比。"""
+        run = WhatIfResult(
+            steps=[
+                AgentStep(key="parse", name="解析假设"),
+                AgentStep(key="patch", name="应用变更"),
+                AgentStep(key="solve", name="重新求解"),
+                AgentStep(key="diff", name="方案对比"),
+                AgentStep(key="explain", name="说明影响"),
+            ]
+        )
+
+        if not text.strip():
+            run.error = "请描述你想验证的假设，例如「如果张伟周三请假会怎样」。"
+            return run
+
+        if not self.llm.enabled:
+            run.error = "未配置大模型 API Key，无法解析自然语言假设。"
+            return run
+
+        # ---------- 1. 解析假设 ----------
+        step = run.steps[0]
+        step.status = "running"
+        t0 = time.perf_counter()
+        system = prompts.WHATIF_SYSTEM.format(context=self._context_block(problem))
+        try:
+            patch, _raw = await self.llm.chat_json(
+                system, prompts.WHATIF_USER.format(text=text.strip()), WhatIfPatch
+            )
+        except LLMError as exc:
+            step.status = "error"
+            step.detail = str(exc)
+            run.error = str(exc)
+            return run
+        step.duration_ms = int((time.perf_counter() - t0) * 1000)
+        run.understood = patch.understood
+        run.ops = patch.ops
+
+        if not patch.ops:
+            step.status = "warn"
+            step.detail = patch.understood or "没能从这句话里识别出可执行的变更"
+            run.error = "没能识别出可执行的变更。试试更具体的说法，例如「如果张伟周三请假会怎样」。"
+            return run
+
+        step.status = "ok"
+        step.detail = patch.understood or f"识别到 {len(patch.ops)} 处变更"
+
+        # ---------- 2. 应用变更 ----------
+        step = run.steps[1]
+        step.status = "running"
+        patched, notes = apply_patch(problem, patch.ops)
+        run.patched_problem = patched
+        run.notes = notes
+        step.status = "ok"
+        step.detail = "；".join(notes) if notes else "没有产生实际变更"
+
+        # ---------- 3. 重新求解（原方案也重算一次，保证对比公平） ----------
+        step = run.steps[2]
+        step.status = "running"
+        t1 = time.perf_counter()
+        try:
+            baseline = await asyncio.to_thread(solve, problem, time_limit=15.0)
+            # 传入 baseline，启用「最小扰动」目标：只改必须改的班次
+            after = await asyncio.to_thread(
+                solve, patched, time_limit=15.0, baseline=baseline.assignments
+            )
+        except Exception as exc:  # noqa: BLE001
+            step.status = "error"
+            step.detail = f"求解异常：{exc}"
+            run.error = f"求解异常：{exc}"
+            return run
+        step.duration_ms = int((time.perf_counter() - t1) * 1000)
+        step.status = "ok" if after.assignments else "warn"
+        step.detail = (
+            f"原方案 {baseline.status}（{len(baseline.assignments)} 条）→ "
+            f"新方案 {after.status}（{len(after.assignments)} 条）"
+        )
+        run.baseline_result = baseline
+        run.result = after
+
+        # ---------- 4. 对比 ----------
+        step = run.steps[3]
+        step.status = "running"
+        diff = compute_diff(problem, baseline, patched, after)
+        run.diff = diff
+        step.status = "ok"
+        step.detail = (
+            f"取消 {len(diff.removed)} 条、新增 {len(diff.added)} 条，"
+            f"未变动 {diff.unchanged_count} 条"
+        )
+
+        # ---------- 5. 说明影响 ----------
+        step = run.steps[4]
+        if skip_narrative:
+            step.status = "ok"
+            step.detail = "已跳过"
+        else:
+            step.status = "running"
+            t2 = time.perf_counter()
+            ops_text = "；".join(
+                f"{o.op}({o.employee_name or o.employee_id or ''}{'/' + o.date if o.date else ''}"
+                f"{'/' + o.shift_id if o.shift_id else ''}"
+                f"{'=' + str(o.headcount) if o.headcount is not None else ''}"
+                f"{'=' + str(o.value) if o.value is not None else ''})"
+                for o in patch.ops
+            )
+            diff_facts = {
+                "原方案状态": diff.status_before,
+                "新方案状态": diff.status_after,
+                "原方案排班数": diff.total_before,
+                "新方案排班数": diff.total_after,
+                "取消的排班数": len(diff.removed),
+                "新增的排班数": len(diff.added),
+                "未变动的排班数": diff.unchanged_count,
+                "受影响最大的员工": [
+                    f"{r.name}：{r.before}天 → {r.after}天"
+                    for r in diff.per_employee
+                    if r.delta != 0
+                ][:5]
+                or ["无"],
+            }
+            try:
+                run.narrative = await self.llm.chat_text(
+                    prompts.WHATIF_NARRATIVE_SYSTEM,
+                    prompts.WHATIF_NARRATIVE_USER.format(
+                        text=text.strip(),
+                        ops=ops_text,
+                        diff=json.dumps(diff_facts, ensure_ascii=False, indent=2),
+                        diagnosis=after.diagnosis or "无",
+                    ),
+                )
+                step.status = "ok"
+                step.detail = "已生成影响说明"
+                suspicious = number_guard(
+                    run.narrative, json.dumps(diff_facts, ensure_ascii=False) + after.model_dump_json()
+                )
+                if suspicious:
+                    step.status = "warn"
+                    step.detail = "已生成影响说明，但发现来源不明的数字：" + "、".join(suspicious[:5])
+            except LLMError as exc:
+                step.status = "warn"
+                step.detail = f"影响说明生成失败（不影响对比结果）：{exc}"
+            step.duration_ms = int((time.perf_counter() - t2) * 1000)
+
+        run.ok = bool(after.assignments) or after.status in ("OPTIMAL", "FEASIBLE")
         return run

@@ -89,3 +89,36 @@ if r3.status_code == 200:
     print("仍给出可行方案:", len(d3["assignments"]), "条排班")
 else:
     print(r3.text[:800])
+
+print("\n" + "=" * 70)
+print("5) POST /api/agent/whatif（如果……会怎样）")
+base_problem = data.get("problem")
+if not base_problem:
+    print("跳过：第 2 步没有返回 problem")
+else:
+    wi = client.post(
+        "/api/agent/whatif",
+        json={"problem": base_problem, "text": "如果张伟下周只能上 2 天班会怎样？"},
+    )
+    print("HTTP", wi.status_code)
+    if wi.status_code == 200:
+        w = wi.json()
+        print("Agent 的理解:", w.get("understood"))
+        for s in w.get("steps", []):
+            print(f"  [{s['status']:5}] {s['name']:<6} {s['detail'][:80]}")
+        dd = w.get("diff")
+        if dd:
+            print(
+                f"\n状态 {dd['status_before']} -> {dd['status_after']}，"
+                f"排班数 {dd['total_before']} -> {dd['total_after']}"
+            )
+            print(
+                f"取消 {len(dd['removed'])} 条 / 新增 {len(dd['added'])} 条 / "
+                f"未变 {dd['unchanged_count']} 条"
+            )
+            for r in dd["per_employee"][:4]:
+                print(f"   {r['name']}: {r['before']} 天 -> {r['after']} 天 ({r['delta']:+d})")
+        if w.get("narrative"):
+            print("\n影响说明:", w["narrative"])
+    else:
+        print(wi.text[:600])
