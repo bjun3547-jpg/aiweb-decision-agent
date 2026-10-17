@@ -1,0 +1,40 @@
+# ---- 密钥与本地配置（务必不要提交） ----
+.env
+.env.local
+*.env
+
+# ---- Python ----
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# ---- 运行产物 ----
+.tmp/
+.npm-cache/
+.wheels/
+acl-*.json
+*.log
+*.db
+*.sqlite3
+
+# ---- Node / 前端 ----
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 比赛交付物暂存（体积大，按需单独管理） ----
+# docs/交付物/*.mp4
+# docs/交付物/*.pdf

@@ -1,0 +1,9 @@
+# 后端依赖
+# 安装： .venv\Scripts\python.exe -m pip install -r requirements.txt
+
+ortools>=9.10          # 约束规划求解器（CP-SAT），项目技术核心
+fastapi>=0.110         # Web 框架，自带 OpenAPI 文档
+uvicorn>=0.27          # ASGI 服务器
+httpx>=0.27            # 调用 LLM API 的异步 HTTP 客户端
+pydantic>=2.6          # 数据校验 / LLM 输出的 JSON Schema
+python-dotenv>=1.0     # 读取 .env 里的 API Key
