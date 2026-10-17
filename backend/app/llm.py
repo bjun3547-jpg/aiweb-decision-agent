@@ -86,6 +86,24 @@ MOCK_NARRATIVE = (
     "李娜 10/24、赵磊 10/19 的休息偏好均已满足。"
 )
 
+MOCK_WHATIF: dict[str, Any] = {
+    "understood": "假设张伟下周只能上 2 天班（比原来少 2 天）",
+    "ops": [
+        {
+            "op": "set_max_shifts",
+            "employee_id": "E01",
+            "employee_name": "张伟",
+            "value": 2,
+            "reason": "张伟下周只能上 2 天班",
+        }
+    ],
+}
+
+MOCK_WHATIF_NARRATIVE = (
+    "这个假设能排出来，但要多挪动几个班次：张伟周四原本有一个班，需要由别人顶上，"
+    "店里所有人都还在每周 5 天的上限之内。提醒店长确认周四顶班的人是否熟悉收银。"
+)
+
 
 def _mock_enabled() -> bool:
     return os.getenv("LLM_MOCK", "").strip().lower() in {"1", "true", "yes", "on"}
@@ -182,8 +200,9 @@ class LLMClient:
             data = await self._post(payload)
 
             if _mock_enabled():
-                obj = schema_model.model_validate(MOCK_EXTRACTION)
-                return obj, json.dumps(MOCK_EXTRACTION, ensure_ascii=False, indent=2)
+                src = MOCK_WHATIF if schema_model.__name__ == "WhatIfPatch" else MOCK_EXTRACTION
+                obj = schema_model.model_validate(src)
+                return obj, json.dumps(src, ensure_ascii=False, indent=2)
 
             content = (data.get("choices") or [{}])[0].get("message", {}).get("content", "")
             try:
@@ -218,7 +237,7 @@ class LLMClient:
         max_tokens: int = 900,
     ) -> str:
         if _mock_enabled():
-            return MOCK_NARRATIVE
+            return MOCK_WHATIF_NARRATIVE if "对比" in system or "假设" in system else MOCK_NARRATIVE
         payload = {
             "model": self.model,
             "messages": [

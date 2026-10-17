@@ -140,3 +140,97 @@ class SolveResult(BaseModel):
     )
     diagnosis: str = Field(default="", description="面向用户的中文诊断说明")
     stats: dict[str, float | int | str] = Field(default_factory=dict)
+
+
+# --------------------------------------------------------------------------- #
+# Agent 运行轨迹（agent 与 what-if 共用）
+# --------------------------------------------------------------------------- #
+
+
+class AgentStep(BaseModel):
+    """Agent 的一步，供前端展示 trace。"""
+
+    key: str
+    name: str
+    status: Literal["pending", "running", "ok", "warn", "error"] = "pending"
+    detail: str = ""
+    duration_ms: int = 0
+
+
+# --------------------------------------------------------------------------- #
+# What-if：自然语言改约束 → 重解 → 方案对比
+# --------------------------------------------------------------------------- #
+
+
+class WhatIfOp(BaseModel):
+    """一条结构化的变更操作。
+
+    刻意做成「受限操作集」而不是「让模型改整个问题」——
+    整份改写容易改坏用户没提到的地方，受限操作集可以逐条审计、可解释。
+    """
+
+    op: Literal[
+        "set_unavailable",        # 让某人在指定日期不可上班
+        "clear_unavailable",      # 清除某人的不可用日期
+        "set_max_shifts",         # 改某人的上班天数上限
+        "set_global_max_shifts",  # 改全局上班天数上限
+        "set_min_rest_days",      # 改每周最少休息天数
+        "set_max_consecutive",    # 改连续工作天数上限
+        "set_demand",             # 改某班次人数需求（date 为空表示所有日期）
+        "add_skill",              # 给某人加一个技能
+        "remove_employee",        # 移除某人
+    ] = Field(description="操作类型")
+    employee_id: str | None = Field(default=None, description="员工 id，如 E01")
+    employee_name: str | None = Field(default=None, description="员工姓名（便于人读）")
+    skill: str | None = Field(default=None, description="技能标签")
+    date: str | None = Field(default=None, description="单个日期 yyyy-MM-dd；为空表示全部")
+    dates: list[str] = Field(default_factory=list, description="多个日期")
+    shift_id: str | None = Field(default=None, description="班次 id")
+    headcount: int | None = Field(default=None, description="人数")
+    value: int | None = Field(default=None, description="通用整数参数")
+    reason: str = Field(default="", description="为什么要做这个变更（人话）")
+
+
+class WhatIfPatch(BaseModel):
+    """LLM 对一句「如果……会怎样」的结构化理解。"""
+
+    understood: str = Field(default="", description="用一句话复述用户想要的变更")
+    ops: list[WhatIfOp] = Field(default_factory=list, description="要施加的变更操作")
+
+
+class EmployeeDelta(BaseModel):
+    employee_id: str
+    name: str
+    before: int
+    after: int
+    delta: int
+
+
+class ScheduleDiff(BaseModel):
+    """两个排班方案之间的差异。"""
+
+    added: list[Assignment] = Field(default_factory=list, description="新增的排班")
+    removed: list[Assignment] = Field(default_factory=list, description="被取消的排班")
+    unchanged_count: int = 0
+    per_employee: list[EmployeeDelta] = Field(default_factory=list)
+    status_before: str = ""
+    status_after: str = ""
+    total_before: int = 0
+    total_after: int = 0
+    objective_before: float | None = None
+    objective_after: float | None = None
+    max_shift_delta: int = 0
+
+
+class WhatIfResult(BaseModel):
+    ok: bool = False
+    understood: str = ""
+    ops: list[WhatIfOp] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list, description="补丁应用日志")
+    patched_problem: SchedulingProblem | None = None
+    baseline_result: SolveResult | None = None
+    result: SolveResult | None = None
+    diff: ScheduleDiff | None = None
+    narrative: str = ""
+    steps: list[AgentStep] = Field(default_factory=list)
+    error: str = ""
