@@ -113,6 +113,35 @@
   table.sched td.num{background:transparent; font-variant-numeric:tabular-nums; color:var(--muted); font-size:12px}
   .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:12px; color:var(--muted)}
   .legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:middle}
+
+  /* ---- what-if 对比 ---- */
+  table.sched td.chg{position:relative; box-shadow:inset 0 0 0 2px #f59e0b; font-weight:700}
+  table.sched td.chg::after{
+    content:""; position:absolute; top:2px; right:2px;
+    width:5px; height:5px; border-radius:50%; background:#fff; opacity:.9;
+  }
+  .wi-input{display:flex; gap:8px; margin-top:4px}
+  .wi-input input{
+    flex:1; font:inherit; padding:10px 13px; border:1px solid var(--line);
+    border-radius:10px; background:#fcfcff; outline:none;
+  }
+  .wi-input input:focus{border-color:var(--brand); background:#fff}
+  .cmp{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-top:14px}
+  .cmp div{background:#fafbff; border:1px solid var(--line); border-radius:10px; padding:10px 12px}
+  .cmp .k{font-size:11.5px; color:var(--muted); margin-bottom:2px}
+  .cmp .v{font-size:15px; font-weight:700; font-variant-numeric:tabular-nums}
+  .cmp .v .old{color:#9ca3af; font-weight:500; font-size:12.5px; margin-right:5px; text-decoration:line-through}
+  .cmp .v .up{color:var(--ok)} .cmp .v .down{color:var(--err)}
+  .chipset{display:flex; gap:7px; flex-wrap:wrap; margin-top:12px}
+  .chipset span{
+    font-size:12px; padding:4px 10px; border-radius:999px;
+    background:#f3f4f6; color:#4b5563; border:1px solid var(--line);
+    font-variant-numeric:tabular-nums;
+  }
+  .chipset span.plus{background:#ecfdf5; color:#047857; border-color:#d1fae5}
+  .chipset span.minus{background:#fef2f2; color:#b91c1c; border-color:#fecaca}
+  .ops{font-size:12.5px; color:var(--muted); margin-top:10px; line-height:1.9}
+  .ops code{background:#eef2ff; color:#4338ca}
   .kpi{display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:10px; margin-top:14px}
   .kpi div{background:#fafbff; border:1px solid var(--line); border-radius:10px; padding:9px 11px}
   .kpi .k{font-size:11.5px; color:var(--muted)}
@@ -226,6 +255,102 @@
           <span><i style="background:#fafafe;border:1px solid var(--line)"></i>休息</span>
         </div>
       </div>
+
+      <!-- ⑥ What-if -->
+      <div class="card" style="margin-top:16px" v-if="run && run.problem && run.result && run.result.assignments.length">
+        <h2>⑥ 如果……会怎样？（方案对比）</h2>
+        <div class="wi-input">
+          <input v-model="wiText" :disabled="wiLoading" @keyup.enter="runWhatIf"
+                 placeholder="例如：如果张伟下周只能上 2 天班会怎样？" />
+          <button class="primary" @click="runWhatIf" :disabled="wiLoading || !wiText.trim()">
+            <span v-if="wiLoading" class="spin"></span>{{ wiLoading ? '对比中…' : '对比' }}
+          </button>
+        </div>
+        <div class="chipset">
+          <button class="chip" v-for="(s, i) in wiSamples" :key="i" @click="wiText = s" :disabled="wiLoading">{{ s }}</button>
+        </div>
+
+        <div class="alert err" v-if="wiError" style="margin-top:12px">{{ wiError }}</div>
+
+        <div v-if="wi && wi.diff">
+          <div class="alert info" v-if="wi.understood" style="margin-top:12px">
+            <b>Agent 的理解：</b>{{ wi.understood }}
+            <div class="ops">
+              <span v-for="(o, i) in wi.ops" :key="i">
+                <code>{{ o.op }}</code>
+                <span v-if="o.employee_name || o.employee_id"> {{ o.employee_name || o.employee_id }}</span>
+                <span v-if="o.date"> {{ o.date }}</span>
+                <span v-if="o.headcount !== null && o.headcount !== undefined"> {{ o.headcount }} 人</span>
+                <span v-if="o.value !== null && o.value !== undefined"> {{ o.value }}</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="cmp">
+            <div>
+              <div class="k">总排班数</div>
+              <div class="v">{{ wi.diff.total_after }}<span class="old" v-if="wi.diff.total_before !== wi.diff.total_after">{{ wi.diff.total_before }}</span></div>
+            </div>
+            <div>
+              <div class="k">改动的班次</div>
+              <div class="v">{{ wi.diff.added.length + wi.diff.removed.length }}</div>
+            </div>
+            <div>
+              <div class="k">保持不动</div>
+              <div class="v">{{ wi.diff.unchanged_count }}</div>
+            </div>
+            <div>
+              <div class="k">求解状态</div>
+              <div class="v" style="font-size:13px">{{ wi.diff.status_after }}</div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">每人上班天数变化</div>
+            <div class="chipset">
+              <span v-for="r in wi.diff.per_employee" :key="r.employee_id"
+                    :class="r.delta > 0 ? 'plus' : (r.delta < 0 ? 'minus' : '')">
+                {{ r.name }} {{ r.before }} → {{ r.after }}
+                <b v-if="r.delta !== 0">({{ r.delta > 0 ? '+' : '' }}{{ r.delta }})</b>
+              </span>
+            </div>
+          </div>
+
+          <div style="margin-top:16px" v-if="wiMatrix">
+            <div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">
+              新排班表（<span style="color:#f59e0b;font-weight:600">黄框</span>表示相对原方案有变动）
+            </div>
+            <table class="sched">
+              <thead>
+                <tr>
+                  <th class="name">员工</th>
+                  <th v-for="d in wiMatrix.dates" :key="d">{{ d.slice(5) }}</th>
+                  <th>上班</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="r in wiMatrix.rows" :key="r.id">
+                  <td class="name">{{ r.name }}</td>
+                  <td v-for="(c, i) in r.cells" :key="i"
+                      :class="[c.after ? 'on' : 'off', c.changed ? 'chg' : '']"
+                      :style="c.after ? {background:c.color} : {}"
+                      :title="c.changed ? ('原：' + (c.before ? c.before.label : '休')) : ''">
+                    {{ c.after ? c.after.label : '休' }}
+                  </td>
+                  <td class="num">{{ r.worked }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert info" v-if="wi.narrative" style="white-space:pre-wrap">
+            <b>影响说明：</b>{{ wi.narrative }}
+          </div>
+          <div class="alert warn" v-if="wi.result && wi.result.diagnosis" style="white-space:pre-wrap">
+            {{ wi.result.diagnosis }}
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 右侧栏 -->
@@ -288,6 +413,17 @@ createApp({
     const run = ref(null);
     const error = ref("");
 
+    // what-if 状态
+    const wi = ref(null);
+    const wiText = ref("");
+    const wiLoading = ref(false);
+    const wiError = ref("");
+    const wiSamples = [
+      "如果张伟下周只能上 2 天班会怎样？",
+      "如果每班需要的人数加到 3 人？",
+      "如果把每周最少休息天数改成 2 天？"
+    ];
+
     const samples = [
       {
         label: "示例：排得出来",
@@ -303,6 +439,7 @@ createApp({
 
     async function submit() {
       loading.value = true; error.value = ""; run.value = null;
+      wi.value = null; wiText.value = ""; wiError.value = "";
       try {
         const r = await fetch("/api/agent/run", {
           method: "POST",
@@ -343,6 +480,63 @@ createApp({
       };
     });
 
+    // ---- what-if 对比矩阵：每格知道"原来是什么 / 现在是什么 / 变没变" ----
+    const wiMatrix = computed(() => {
+      const w = wi.value;
+      const p = run.value && run.value.problem;
+      if (!w || !w.diff || !p) return null;
+
+      const base = {};
+      (w.baseline_result && w.baseline_result.assignments || []).forEach(a => {
+        base[a.employee_id + "|" + a.date] = a;
+      });
+      const aft = {};
+      (w.result && w.result.assignments || []).forEach(a => {
+        aft[a.employee_id + "|" + a.date] = a;
+      });
+      const colorOf = (a) => {
+        const i = p.shifts.findIndex(s => s.id === a.shift_id);
+        return shiftColor(i < 0 ? 0 : i);
+      };
+      const emps = (w.patched_problem || p).employees;
+
+      return {
+        dates: p.dates,
+        rows: emps.map(e => {
+          const cells = p.dates.map(d => {
+            const k = e.id + "|" + d;
+            const b = base[k], a = aft[k];
+            return {
+              before: b ? { label: b.shift_name, shift: b.shift_id } : null,
+              after: a ? { label: a.shift_name, shift: a.shift_id, color: colorOf(a) } : null,
+              changed: (b ? b.shift_id : null) !== (a ? a.shift_id : null)
+            };
+          });
+          return { id: e.id, name: e.name, cells, worked: cells.filter(c => c.after).length };
+        })
+      };
+    });
+
+    async function runWhatIf() {
+      if (!run.value || !run.value.problem || wiLoading.value) return;
+      wiLoading.value = true; wiError.value = ""; wi.value = null;
+      try {
+        const r = await fetch("/api/agent/whatif", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ problem: run.value.problem, text: wiText.value })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || ("HTTP " + r.status));
+        wi.value = data;
+        if (!data.ok && data.error) wiError.value = data.error;
+      } catch (e) {
+        wiError.value = "对比失败：" + e.message;
+      } finally {
+        wiLoading.value = false;
+      }
+    }
+
     function shiftColor(i) { return SHIFT_COLORS[i % SHIFT_COLORS.length]; }
     function icon(s) {
       return { ok: "✓", warn: "!", error: "×", running: "…", pending: "" }[s] || "";
@@ -359,7 +553,8 @@ createApp({
     });
 
     return { health, text, loading, run, error, samples, useSample, submit: submit,
-             matrix, shiftColor, icon, renderNarrative };
+             matrix, shiftColor, icon, renderNarrative,
+             wi, wiText, wiLoading, wiError, wiSamples, runWhatIf, wiMatrix };
   }
 }).mount("#app");
 </script>
