@@ -105,6 +105,102 @@ cd backend
 
 会依次输出「约束合理 → 最优排班」和「约束冲突 → 自动诊断 + 松弛方案」两个完整案例。
 
+### 3.5 队友上手（克隆后必做的四步）
+
+```powershell
+git clone https://github.com/bjun3547-jpg/aiweb-decision-agent.git F:\AIWeb
+cd F:\AIWeb
+```
+
+**① 设成你自己的名字**（不设的话，你的提交会挂在别人名下）
+
+```powershell
+git config user.name  "你的名字"
+git config user.email "你的邮箱"
+git log -1 --format="%an <%ae>"    # 确认生效
+```
+
+**② 修复 Git 的 TLS 后端**（Windows 上 git 默认用 schannel，某些机器会直接失败）
+
+```powershell
+git config http.sslBackend openssl
+```
+
+如果 `git push` 报 `Recv failure: Connection was reset` 或连接超时，说明需要走代理：
+
+```powershell
+git config http.proxy http://127.0.0.1:7897    # 换成你自己的代理端口
+```
+
+> 这两条是**仓库级配置**，存在 `.git/config` 里，不会跟着仓库同步。每台机器都要自己设一次。
+
+**③ 建 Python 环境**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+> 用清华镜像，官方源在国内会慢到超时。
+
+**④ 配置并启动**
+
+```powershell
+Copy-Item backend\.env.example backend\.env
+# 编辑 backend\.env，填入你自己的 DEEPSEEK_API_KEY 或队友共享的 Key
+
+cd backend
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+打开 <http://127.0.0.1:8000>，点「示例：排得出来」→「开始排班」，能看到排班表就说明环境 OK。
+
+> 没有 Key 也能验证界面：先设 `$env:LLM_MOCK="1"` 再启动，会返回内置样例数据。
+
+### 3.6 三人协作规矩（很重要，不遵守会互相覆盖）
+
+**分工到文件，不要两个人同时改同一个文件：**
+
+| 角色 | 负责的目录 / 文件 | 尽量不要碰 |
+| --- | --- | --- |
+| 冯璐（队长） | `backend/app/agent.py`、`llm.py`、`prompts.py`、`main.py` | `solver/`、`static/` |
+| 队友 B | `backend/app/static/`（前端页面） | `solver/`、`agent.py` |
+| 队友 C | `docs/`、`backend/app/solver/` | `static/`、`agent.py` |
+
+**每天的标准动作（照做不会出事）：**
+
+```powershell
+cd F:\AIWeb
+git pull                                  # ① 动手前先拉别人的改动
+# ... 改代码 ...
+git add .
+git commit -m "feat: 做了什么"
+git pull                                  # ② 推送前再拉一次
+git push
+```
+
+**遇到 `! [rejected] main -> main (fetch first)` 怎么办？**
+
+不要慌，这说明队友比你先推了。执行：
+
+```powershell
+git pull --rebase
+git push
+```
+
+`--rebase` 会把你的提交"叠"在队友的改动之上，不会产生多余的合并记录。
+
+**遇到 `CONFLICT`（冲突）怎么办？**
+
+说明你和队友改了**同一个文件的同一行**。这时候：
+
+1. **不要乱删乱改**，立刻在群里说一声
+2. 打开冲突文件，找 `<<<<<<<`、`=======`、`>>>>>>>` 这几个标记
+3. 两个人商量保留哪个版本，删掉标记
+4. `git add .` → `git commit -m "fix: 解决冲突"` → `git push`
+
+> 根本上避免冲突的办法就是上面的**文件分工**。各改各的文件，冲突概率接近零。
+
 ---
 
 ## 4. 目录结构
