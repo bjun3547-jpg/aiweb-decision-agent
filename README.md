@@ -164,8 +164,8 @@ cd backend
 | 角色 | 负责的目录 / 文件 | 尽量不要碰 |
 | --- | --- | --- |
 | 冯璐（队长） | `backend/app/agent.py`、`llm.py`、`prompts.py`、`main.py` | `solver/`、`static/` |
-| 队友 B | `backend/app/static/`（前端页面） | `solver/`、`agent.py` |
-| 队友 C | `docs/`、`backend/app/solver/` | `static/`、`agent.py` |
+| 李芳青 | `backend/app/static/`（前端页面） | `solver/`、`agent.py` |
+| 郑茜文 | `docs/`、`backend/app/solver/` | `static/`、`agent.py` |
 
 **每天的标准动作（照做不会出事）：**
 
