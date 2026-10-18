@@ -171,6 +171,11 @@ class DecisionAgent:
         conflicts = "；".join(f"{c.label}（{c.detail}）" for c in result.conflicts) or "无"
         violations = "；".join(result.violations) or "无"
 
+        # 关键：把求解器算好的「确定性诊断」（含精确的调整建议）也传给模型，
+        # 并要求它直接引用，否则模型会自己另算一套「加 1 个人 / 降到 2 人」之类的错误建议，
+        # 与冲突诊断卡片上的正确建议互相矛盾。
+        diagnosis = result.diagnosis or "无（约束可满足）"
+
         return await self.llm.chat_text(
             prompts.NARRATIVE_SYSTEM,
             prompts.NARRATIVE_USER.format(
@@ -178,6 +183,7 @@ class DecisionAgent:
                 status=result.status,
                 numbers=json.dumps(numbers, ensure_ascii=False, indent=2),
                 conflicts=conflicts,
+                diagnosis=diagnosis,
                 violations=violations,
             ),
         )
