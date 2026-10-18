@@ -530,6 +530,9 @@ cd backend
 # 离线演示：最优排班 + 冲突自愈
 ..\.venv\Scripts\python.exe demo_scheduling.py
 
+# 检查 API Key 是否可用、余额够不够（录制视频前必跑）
+..\.venv\Scripts\python.exe check_key.py
+
 # API 冒烟测试（mock 模式，不消耗 token）
 ..\.venv\Scripts\python.exe smoke_test.py
 
