@@ -201,6 +201,125 @@ git push
 
 > 根本上避免冲突的办法就是上面的**文件分工**。各改各的文件，冲突概率接近零。
 
+### 3.7 常见问题（照报错原文查）
+
+按报错里的关键词找，不用从头读。
+
+---
+
+**① `python : 无法将"python"项识别为 cmdlet、函数、脚本文件或可运行程序的名称`**
+
+Python 没装，或装了但没加进 PATH。
+
+```powershell
+# 先确认到底有没有
+py --version
+where.exe python
+```
+
+有 `py` 就用 `py -m venv .venv` 代替 `python -m venv .venv`。都没有就去 <https://www.python.org/downloads/> 装，**安装第一屏必须勾选 `Add python.exe to PATH`**。
+
+---
+
+**② `pip install` 卡在 `Collecting ortools` 不动，或报 `ReadTimeoutError`**
+
+官方源在国内基本拉不动（ortools 包很大）。换清华镜像：
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+还超时就加大超时时间：
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt `
+    -i https://pypi.tuna.tsinghua.edu.cn/simple --timeout 120
+```
+
+---
+
+**③ `ModuleNotFoundError: No module named 'app'`**
+
+启动命令不在 `backend` 目录下执行。`app` 是相对路径的包名，必须先进目录：
+
+```powershell
+cd F:\AIWeb\backend          # ← 这一步不能漏
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+---
+
+**④ `[Errno 10048] error while attempting to bind on address ('127.0.0.1', 8000)`**
+
+8000 端口被占用（常见于上次的服务没关干净）。两个办法：
+
+```powershell
+# 办法一：换个端口
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8001
+
+# 办法二：杀掉占用 8000 的进程
+netstat -ano | findstr :8000
+taskkill /PID <上面查到的PID> /F
+```
+
+---
+
+**⑤ 页面能打开，但点「开始排班」报 `未配置 API Key。请在 backend/.env 里设置 DEEPSEEK_API_KEY，或设置 LLM_MOCK=1 使用离线样例数据。`**
+
+`backend/.env` 不存在，或存在但 `DEEPSEEK_API_KEY=` 后面是空的。
+
+```powershell
+Test-Path backend\.env                                   # 应该是 True
+Select-String "DEEPSEEK_API_KEY" backend\.env            # 看后面有没有值
+```
+
+没有就建：
+
+```powershell
+Copy-Item backend\.env.example backend\.env
+notepad backend\.env
+```
+
+---
+
+**⑥ `API Key 无效（HTTP 401）。请检查 backend/.env 里的 DEEPSEEK_API_KEY。`**
+
+Key 本身有问题。按顺序排查：
+
+1. `DEEPSEEK_API_KEY=` 后面**不能有空格和引号**，正确写法是 `DEEPSEEK_API_KEY=sk-xxxxx`
+2. Key 是否已过期或被删除 → 去 <https://platform.deepseek.com/api_keys> 重新复制
+3. 复制时有没有漏字符 → 整行重新粘一遍
+
+> 这个报错也顺带说明**网络是通的**：能收到 DeepSeek 的 401 响应，就说明请求已经发出去了。
+
+---
+
+**⑦ `账户余额不足（HTTP 402）。`**
+
+去 <https://platform.deepseek.com/top_up> 充值。**充 10 元足够跑完整个赛程**——一次完整排班链路约 2 次模型调用，成本不到 1 分钱。
+
+---
+
+**⑧ `git push` 报 `Recv failure: Connection was reset` 或长时间无响应**
+
+GitHub 直连不通，需要走代理：
+
+```powershell
+git config http.proxy http://127.0.0.1:7897    # 端口换成你自己代理软件的
+git config http.sslBackend openssl
+git push
+```
+
+---
+
+**⑨ 排班表里的中文变成乱码 / 方框**
+
+浏览器编码问题，或文件被以错误编码保存。先按 `Ctrl + F5` 强制刷新；仍然乱码就检查编辑器是否把文件存成了 GBK —— 所有 `.py` / `.md` / `.html` 一律用 **UTF-8** 保存。
+
+> 写 PowerShell 脚本时有个坑：`.ps1` 文件必须是 **UTF-8 with BOM**。无 BOM 的 UTF-8 在中文 Windows 上会被按 GBK 解析，中文字节错位后会"吃掉"后面的 `}` 和引号，报出一堆位置完全不对的语法错误。
+
+---
+
 ---
 
 ## 4. 目录结构
