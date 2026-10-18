@@ -257,7 +257,7 @@
       </div>
 
       <!-- ⑥ What-if -->
-      <div class="card" style="margin-top:16px" v-if="run && run.problem && run.result && run.result.assignments.length">
+      <div class="card" style="margin-top:16px" v-if="run && run.problem && run.result && run.result.status !== 'INFEASIBLE' && run.result.assignments.length">
         <h2>⑥ 如果……会怎样？（方案对比）</h2>
         <div class="wi-input">
           <input v-model="wiText" :disabled="wiLoading" @keyup.enter="runWhatIf"
@@ -360,12 +360,11 @@
         <div class="kpi">
           <div><div class="k">员工</div><div class="v">{{ run.problem.employees.length }}</div></div>
           <div><div class="k">天数</div><div class="v">{{ run.problem.dates.length }}</div></div>
-          <div><div class="k">总排班</div><div class="v">{{ run.result ? run.result.assignments.length : 0 }}</div></div>
+          <div><div class="k">{{ run.result && run.result.status === 'INFEASIBLE' ? '参考方案' : '总排班' }}</div><div class="v">{{ run.result ? run.result.assignments.length : 0 }}</div></div>
           <div><div class="k">求解</div><div class="v">{{ run.result ? run.result.solve_time_seconds.toFixed(2) : '—' }}<span style="font-size:11px">s</span></div></div>
         </div>
         <div class="hint" v-if="run.result">
           求解状态 <b>{{ run.result.status }}</b>
-          <span v-if="run.result.objective !== null && run.result.objective !== undefined"> · 目标值 {{ run.result.objective }}</span>
         </div>
       </div>
 
@@ -431,7 +430,7 @@ createApp({
       },
       {
         label: "示例：排不出来",
-        text: "同样这 7 个店员，下周每天早班和晚班各要 3 个人，晚班需要会收银的人。每人每周最多上 5 天班，每周至少休息 1 天。张伟下周三请假。"
+        text: "我们便利店下周一到周日要排班。一共 7 个店员：张伟、李娜、王强、刘洋、陈静、赵磊、孙悦。每天分早班和晚班，晚班需要会收银的人。这次每个班次每天要 3 个人。每人每周最多上 5 天班，每周至少休息 1 天。张伟下周三请假。"
       }
     ];
 
