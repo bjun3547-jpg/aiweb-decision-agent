@@ -19,11 +19,18 @@ from __future__ import annotations
 import asyncio
 import json
 import re
+import sys as _sys
 import time
 from datetime import date as _date
+from pathlib import Path as _Path
 from typing import Literal
 
 from pydantic import BaseModel, Field
+
+# 允许 `python app/agent.py` 直接运行：把 backend/ 加进模块搜索路径。
+# 正常 `python -m app.agent` 时 __package__ 是 "app"，这段不执行。
+if __package__ in (None, ""):
+    _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
 
 from app import prompts
 from app.llm import LLMClient, LLMError

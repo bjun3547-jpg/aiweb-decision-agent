@@ -340,31 +340,38 @@ git push
 
 ---
 
-**⑩ `ModuleNotFoundError: No module named 'app'`（直接运行 `python app/agent.py` 时）**
+**⑩ 运行 Agent 报 `ModuleNotFoundError`（`No module named 'app'` 或 `No module named 'ortools'`）**
 
-**`agent.py` 是模块，不是脚本，不能直接双击或 `python app/agent.py` 运行。**
+这是两个不同的问题，很容易混在一起：
 
-原因：文件里写的是 `from app import prompts`，要求 `backend/` 目录在 Python 的模块搜索路径里。而直接运行文件时，Python 只把**文件所在目录**（`backend/app/`）加进搜索路径，所以它去找的是 `backend/app/app/prompts.py`——永远找不到。**换什么工作目录都没用。**
+| 报错里缺的模块 | 真正原因 | 解决 |
+| --- | --- | --- |
+| `app` | 运行方式不对：`agent.py` 是**模块**不是脚本，`from app import prompts` 要求 `backend/` 在模块搜索路径里。直接 `python app/agent.py` 时 Python 只把 `backend/app/` 加进路径，它去找的是 `backend/app/app/prompts.py` | 见下方三种正确跑法 |
+| `ortools` / `fastapi` | **用错了 Python**。系统的 `python`（尤其 Anaconda）不是项目虚拟环境，没装这两个包 | 一律用 `.venv\Scripts\python.exe` |
 
-正确跑法有两种：
+**最省事的办法：双击 `run_agent.cmd`**（在仓库根目录）。它自动切到 `backend`、自动用项目的 venv、自动加载 `.env`，不依赖你当前在哪个目录，也不依赖系统 `python`。
+
+```powershell
+F:\AIWeb\run_agent.cmd                                          # 内置示例
+F:\AIWeb\run_agent.cmd "我们店 5 个人，下周每天需要 2 个人上班"   # 自定义需求
+```
+
+想在终端里手动跑，三种方式都可以：
 
 ```powershell
 cd F:\AIWeb\backend
 
-# 方式一：在终端里跑一次完整 Agent（会打印六步轨迹）
+# ① 模块方式（最标准）
 ..\.venv\Scripts\python.exe -m app.agent
 
-# 方式二：跑完整接口冒烟测试（推荐，覆盖面更全）
+# ② 直接跑文件（已做兼容，从仓库根目录也行）
+..\.venv\Scripts\python.exe app\agent.py
+
+# ③ 跑完整接口冒烟测试（推荐，覆盖 5 个接口）
 ..\.venv\Scripts\python.exe smoke_test.py --real
 ```
 
-想自己写一句需求测试：
-
-```powershell
-..\.venv\Scripts\python.exe -m app.agent "我们店 5 个人，下周每天需要 2 个人上班"
-```
-
-> **顺便提醒**：别用系统里的 `python`（比如 Anaconda 那个）。它不是项目虚拟环境，没装 `ortools` 和 `fastapi`，会报另一串 `ModuleNotFoundError`。**一律用 `.venv\Scripts\python.exe`。**
+> 只有一种写法仍然不行：在**仓库根目录**执行 `python -m app.agent`。因为 `app` 包在 `backend/` 下面，根目录看不到它。要么先 `cd backend`，要么用 ② 的写法。
 
 ---
 
