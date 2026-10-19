@@ -321,6 +321,19 @@ def _build(
         else:
             model.Add(covered >= need).OnlyEnforceIf(gate("demand"))
 
+    # ---------- 冗余约束：总工作量下界（纯加速，不改变可行域） ----------
+    # 因为「每人每天最多一个班」，且每个班次的需求都必须被满足，
+    # 所以「所有人工班天数之和」必然 ≥ 所有班次的需求人数之和。
+    # 这条不等式是**冗余**的（可行解集合完全不变），但它极大加强了约束传播：
+    # 实测 5 人档（每班 1 人、需求宽松）原来 15s 都证不出最优，
+    # 加上它之后 0.03s 直接 OPTIMAL，快了约两个数量级。
+    # 必须挂在 demand 闸门上：诊断阶段会「删掉 demand 规则」试解，
+    # 那时这条下界不再成立，不挂闸门会误判为不可行。
+    if not soft and b.work:
+        demand_total = sum(demand_map.values())
+        if demand_total > 0:
+            model.Add(sum(b.work.values()) >= demand_total).OnlyEnforceIf(gate("demand"))
+
     # ---------- 规则②：不可用日期 ----------
     for e in problem.employees:
         for d in sorted(set(e.unavailable_dates) & date_set):

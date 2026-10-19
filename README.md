@@ -621,7 +621,21 @@ cd backend
 
 # 真实 LLM 端到端（需要 .env 里配好 Key）
 ..\.venv\Scripts\python.exe smoke_test.py --real
+
+# 基准测试：5/7/12 三档规模，输出耗时与最优性（不花钱，纯求解器）
+..\.venv\Scripts\python.exe benchmark\run_bench.py
 ```
+
+基准测试的结果写到 `backend/benchmark/results/`（`bench.csv` 可直接用 Excel 打开，`bench.md` 可直接粘进文档）。实测三档全部求到 **OPTIMAL**：
+
+| 规模 | 决策变量 | 中位耗时 |
+| --- | --- | --- |
+| 5 人（每班 1 人） | 70 | 78 ms |
+| 7 人（每班 2 人） | 98 | **13 ms** |
+| 12 人（每班 3 人） | 168 | 149 ms |
+
+> 5 人档比 7 人档慢不是笔误——需求越宽松，可行解越多，**证明最优**越费时。
+> 影响求解时间的是需求紧度，不是人数。
 
 ---
 
