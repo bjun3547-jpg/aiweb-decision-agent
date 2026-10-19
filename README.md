@@ -602,11 +602,10 @@ cd backend
 | 成员 | 角色 | 负责模块 | GitHub |
 | --- | --- | --- | --- |
 | 冯璐 | 队长 · 后端与 Agent | Agent 编排、LLM 适配层、求解器集成、部署 | [bjun3547-jpg](https://github.com/bjun3547-jpg) |
-| 李芳青 | 前端与演示视频 | Web 界面、可视化、演示视频制作 | 马斯卡 |
-| 郑茜文 | 技术文档与评测 | 技术文档、评测集、建模与结果验证 | 七七三一七 |
+| 李芳青 | 前端与演示视频 | Web 界面、可视化、演示视频制作 | [maskya](https://github.com/maskya) |
+| 郑茜文 | 技术文档与评测 | 技术文档、评测集、建模与结果验证 | [qiqi77317](https://github.com/qiqi77317) |
 
-> GitHub 列按账号显示名标注，实际提交记录见仓库的 Contributors 列表。
-> 分工细节见 `docs/01-执行手册.md`，开发过程见 `docs/prompts/` 下的协作快照。
+> 提交记录可直接查看仓库的 Contributors 列表，三人账号均已关联。分工细节见 `docs/01-执行手册.md`，开发过程见 `docs/prompts/` 下的协作快照。
 
 ---
 
