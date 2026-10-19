@@ -340,6 +340,32 @@ git push
 
 ---
 
+**⑩ `ModuleNotFoundError: No module named 'app'`（直接运行 `python app/agent.py` 时）**
+
+**`agent.py` 是模块，不是脚本，不能直接双击或 `python app/agent.py` 运行。**
+
+原因：文件里写的是 `from app import prompts`，要求 `backend/` 目录在 Python 的模块搜索路径里。而直接运行文件时，Python 只把**文件所在目录**（`backend/app/`）加进搜索路径，所以它去找的是 `backend/app/app/prompts.py`——永远找不到。**换什么工作目录都没用。**
+
+正确跑法有两种：
+
+```powershell
+cd F:\AIWeb\backend
+
+# 方式一：在终端里跑一次完整 Agent（会打印六步轨迹）
+..\.venv\Scripts\python.exe -m app.agent
+
+# 方式二：跑完整接口冒烟测试（推荐，覆盖面更全）
+..\.venv\Scripts\python.exe smoke_test.py --real
+```
+
+想自己写一句需求测试：
+
+```powershell
+..\.venv\Scripts\python.exe -m app.agent "我们店 5 个人，下周每天需要 2 个人上班"
+```
+
+> **顺便提醒**：别用系统里的 `python`（比如 Anaconda 那个）。它不是项目虚拟环境，没装 `ortools` 和 `fastapi`，会报另一串 `ModuleNotFoundError`。**一律用 `.venv\Scripts\python.exe`。**
+
 ---
 
 ## 4. 目录结构

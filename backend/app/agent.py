@@ -508,3 +508,74 @@ class DecisionAgent:
 
         run.ok = bool(after.assignments) or after.status in ("OPTIMAL", "FEASIBLE")
         return run
+
+
+# --------------------------------------------------------------------------- #
+# 命令行入口：想在终端里单独跑一次 Agent 时用
+#
+#   cd backend
+#   ..\.venv\Scripts\python.exe -m app.agent "我们便利店下周一到周日要排班……"
+#
+# 注意：必须用 `-m app.agent`，不能直接 `python app/agent.py`。
+# 直接运行文件时 sys.path 里是 backend/app/，`from app import prompts` 找不到包。
+# --------------------------------------------------------------------------- #
+
+_DEMO_TEXT = (
+    "我们便利店下周一到周日要排班。一共 7 个店员：张伟、李娜、王强、刘洋、陈静、赵磊、孙悦。"
+    "每天分早班和晚班，晚班需要会收银的人。每个班次每天要 2 个人。"
+    "每人每周最多上 5 天班，每周至少休息 1 天。张伟下周三请假，李娜周六希望休息。"
+)
+
+
+async def _cli() -> None:
+    import sys
+    from pathlib import Path
+
+    # 单独跑本文件时，.env 不会被自动加载（平时由 main.py 负责），这里补上
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+    except ImportError:
+        pass
+
+    text = " ".join(sys.argv[1:]).strip() or _DEMO_TEXT
+    if not sys.argv[1:]:
+        print("（未提供需求文本，使用内置示例）\n")
+
+    agent = DecisionAgent()
+    if not agent.llm.enabled:
+        print("❌ 未配置 API Key。请在 backend/.env 里设置 DEEPSEEK_API_KEY，")
+        print("   或设置 LLM_MOCK=1 使用离线样例数据。")
+        return
+
+    run = await agent.run(text)
+
+    print("=" * 70)
+    print("六步执行轨迹")
+    print("=" * 70)
+    for s in run.steps:
+        mark = {"ok": "[ok   ]", "warn": "[warn ]", "error": "[error]", "pending": "[     ]"}.get(
+            s.status, "[?]"
+        )
+        print(f"  {mark} {s.name:<8} {s.duration_ms:>5}ms  {s.detail}")
+
+    print()
+    print("=" * 70)
+    print(f"结果：ok={run.ok} | status={(run.result.status if run.result else None)}")
+    print("=" * 70)
+    if run.warnings:
+        print("警告：")
+        for w in run.warnings:
+            print(f"  - {w}")
+        print()
+    if run.narrative:
+        print("决策说明：")
+        print(run.narrative)
+    if run.schedule_table_md:
+        print()
+        print(run.schedule_table_md)
+
+
+if __name__ == "__main__":
+    asyncio.run(_cli())
