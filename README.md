@@ -296,7 +296,11 @@ Key 本身有问题。按顺序排查：
 
 **⑦ `账户余额不足（HTTP 402）。`**
 
-去 <https://platform.deepseek.com/top_up> 充值。**充 10 元足够跑完整个赛程**——一次完整排班链路约 2 次模型调用，成本不到 1 分钱。
+去 <https://platform.deepseek.com/top_up> 充值。**充 10 元足够跑完整个赛程。**
+
+成本参考（10/19 实测）：一次完整排班链路 = 2 次模型调用。DeepSeek 的余额是**批量结算**的，连续跑 6 次余额没有可见变化，隔夜才扣——所以别用余额判断"是不是在花钱"。按隔夜结算的差额估算，**一次约 0.1 元量级**，10 元可以跑上百次；30 题评测集加反复重录视频完全够用。
+
+> 想知道当前余额：启动服务后访问 <http://127.0.0.1:8000/api/health>，`llm.balance` 字段里有；或直接跑 `..\.venv\Scripts\python.exe check_key.py`。
 
 ---
 
@@ -507,7 +511,7 @@ for key, var in x.items():
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
 | GET | `/` | 前端页面 |
-| GET | `/api/health` | 健康检查 + 模型配置状态 |
+| GET | `/api/health` | 健康检查 + 模型配置状态 + **账户余额** |
 | POST | `/api/agent/run` | 自然语言 → 完整决策流程（需 LLM） |
 | POST | `/api/agent/whatif` | 「如果……会怎样」→ 变更 + 重解 + 方案对比（需 LLM） |
 | POST | `/api/solver/solve` | 结构化参数 → 求解（**不需要** LLM，可离线压测） |

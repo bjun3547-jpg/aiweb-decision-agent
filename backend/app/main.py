@@ -13,8 +13,10 @@
 from __future__ import annotations
 
 import os
+import time
 from pathlib import Path
 
+import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -94,21 +96,101 @@ class SolveResponse(BaseModel):
 
 
 # --------------------------------------------------------------------------- #
+# 账户余额查询（带缓存，失败不影响健康检查）
+# --------------------------------------------------------------------------- #
+
+_BALANCE_TTL_SECONDS = 60.0
+_BALANCE_TIMEOUT_SECONDS = 2.5
+
+# (缓存时间戳, 缓存结果)
+_balance_cache: tuple[float, dict[str, object]] | None = None
+
+
+def _fetch_balance(base_url: str, api_key: str) -> dict[str, object]:
+    """查询大模型账户余额。任何异常都转成 `{ok: False, error: ...}`，绝不抛出。
+
+    金额一律返回字符串（接口原始就是字符串），避免浮点误差；
+    Key 只回显前 5 位，其余打码，防止通过接口泄露。
+    """
+    global _balance_cache
+
+    now = time.monotonic()
+    if _balance_cache is not None and now - _balance_cache[0] < _BALANCE_TTL_SECONDS:
+        return _balance_cache[1]
+
+    result: dict[str, object]
+    try:
+        resp = httpx.get(
+            f"{base_url.rstrip('/')}/user/balance",
+            headers={"Authorization": f"Bearer {api_key}"},
+            timeout=_BALANCE_TIMEOUT_SECONDS,
+        )
+        if resp.status_code == 401:
+            result = {"ok": False, "error": "API Key 无效（HTTP 401）"}
+        elif resp.status_code == 404:
+            result = {"ok": False, "error": "当前服务商不支持余额查询接口"}
+        elif resp.status_code != 200:
+            result = {"ok": False, "error": f"余额接口返回 HTTP {resp.status_code}"}
+        else:
+            data = resp.json()
+            infos = data.get("balance_infos") or [{}]
+            first = infos[0] or {}
+            result = {
+                "ok": True,
+                "available": bool(data.get("is_available")),
+                "currency": first.get("currency", "CNY"),
+                "total": first.get("total_balance"),
+                "topped_up": first.get("topped_up_balance"),
+                "granted": first.get("granted_balance"),
+                "key_hint": f"{api_key[:5]}***",
+            }
+    except httpx.TimeoutException:
+        result = {"ok": False, "error": f"查询余额超时（>{_BALANCE_TIMEOUT_SECONDS}s）"}
+    except Exception as exc:  # noqa: BLE001 - 余额查询失败不能影响健康检查
+        result = {"ok": False, "error": f"{type(exc).__name__}: {str(exc)[:120]}"}
+
+    _balance_cache = (now, result)
+    return result
+
+
+# --------------------------------------------------------------------------- #
 # 路由
 # --------------------------------------------------------------------------- #
 
 
 @app.get("/api/health")
-def health() -> dict[str, object]:
+def health(skip_balance: bool = False) -> dict[str, object]:
+    """健康检查 + 模型配置状态 + 账户余额。
+
+    余额查询有三条保护，避免拖慢页面首屏：
+      1. 结果缓存 60 秒，不会每次请求都打外部接口
+      2. 超时只等 2.5 秒，网络不通时不会把 /api/health 卡死
+      3. 查询失败只返回 error 字段，不影响 status 仍为 ok
+
+    不需要余额时传 `?skip_balance=true`，页面首屏可以用它跳过。
+    """
     client = LLMClient()
+    mock = os.getenv("LLM_MOCK", "").lower() in {"1", "true", "yes", "on"}
+
+    llm_info: dict[str, object] = {
+        "configured": bool(client.api_key),
+        "mock": mock,
+        "base_url": client.base_url,
+        "model": client.model,
+    }
+
+    if mock:
+        llm_info["balance"] = {"ok": False, "error": "离线样例模式，不查询余额"}
+    elif not client.api_key:
+        llm_info["balance"] = {"ok": False, "error": "未配置 API Key"}
+    elif skip_balance:
+        llm_info["balance"] = {"ok": False, "error": "本次请求跳过了余额查询"}
+    else:
+        llm_info["balance"] = _fetch_balance(client.base_url, client.api_key)
+
     return {
         "status": "ok",
-        "llm": {
-            "configured": bool(client.api_key),
-            "mock": os.getenv("LLM_MOCK", "").lower() in {"1", "true", "yes", "on"},
-            "base_url": client.base_url,
-            "model": client.model,
-        },
+        "llm": llm_info,
         "solver": "OR-Tools CP-SAT",
     }
 
