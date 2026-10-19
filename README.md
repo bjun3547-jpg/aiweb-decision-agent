@@ -356,7 +356,7 @@ F:\AIWeb\run_agent.cmd                                          # 内置示例
 F:\AIWeb\run_agent.cmd "我们店 5 个人，下周每天需要 2 个人上班"   # 自定义需求
 ```
 
-想在终端里手动跑，三种方式都可以：
+想在终端里手动跑，四种方式都可以：
 
 ```powershell
 cd F:\AIWeb\backend
@@ -369,9 +369,39 @@ cd F:\AIWeb\backend
 
 # ③ 跑完整接口冒烟测试（推荐，覆盖 5 个接口）
 ..\.venv\Scripts\python.exe smoke_test.py --real
+
+# ④ 单独自检 LLM 适配层（查 .env / Key / 网络 / schema 校验）
+..\.venv\Scripts\python.exe app\llm.py
 ```
 
 > 只有一种写法仍然不行：在**仓库根目录**执行 `python -m app.agent`。因为 `app` 包在 `backend/` 下面，根目录看不到它。要么先 `cd backend`，要么用 ② 的写法。
+
+---
+
+**⑪ 单独运行 `llm.py`，什么都不输出，`exit code 0`**
+
+**这不是错误。** `llm.py` 是模块，里面只有类和函数，没有顶层可执行语句——直接运行它，Python 定义完这些类就结束了，所以什么都不打印、退出码 0。
+
+同理 `solver/scheduling.py`、`schemas.py`、`whatif.py` 直接运行也都没反应。
+
+想验证 LLM 这一层是否正常，用自检入口：
+
+```powershell
+cd F:\AIWeb\backend
+..\.venv\Scripts\python.exe app\llm.py            # 完整自检
+..\.venv\Scripts\python.exe app\llm.py --text     # 只测文本生成
+..\.venv\Scripts\python.exe app\llm.py --json     # 只测结构化输出
+```
+
+或者直接双击仓库根目录的 `run_llm_check.cmd`，效果一样，还不用管当前在哪个目录。
+
+它会打印 `.env` 是否加载、Key 掩码、base_url、model、mock 状态，然后真实跑一次纯文本生成和一次结构化抽取，最后给出「工作正常 / N 项失败」。
+
+没有 Key 也能自检（不联网）：
+
+```powershell
+$env:LLM_MOCK=1; ..\.venv\Scripts\python.exe app\llm.py
+```
 
 ---
 
