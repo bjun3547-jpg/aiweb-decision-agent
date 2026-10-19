@@ -21,6 +21,13 @@ acl-*.json
 *.db
 *.sqlite3
 
+# pip 安装中断时会在当前目录留下这些临时目录
+pip-build-tracker-*/
+pip-install-*/
+pip-unpack-*/
+pip-ephem-wheel-cache-*/
+pip-modern-metadata-*/
+
 # ---- Node / 前端 ----
 node_modules/
 dist/
