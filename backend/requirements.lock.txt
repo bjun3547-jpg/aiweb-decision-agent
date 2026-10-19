@@ -1,0 +1,40 @@
+# 依赖锁定清单（实测环境快照）
+#
+# 用途：`requirements.txt` 用的是 >=（保证能装），本文件用 ==（保证装出一样的环境）。
+# 复现时优先用本文件：
+#   .\.venv\Scripts\python.exe -m pip install -r backend\requirements.lock.txt `
+#       -i https://pypi.tuna.tsinghua.edu.cn/simple
+#
+# 生成环境：Windows 11 + Python 3.13.5 + 2026-10-19 实测
+# 生成方式：importlib.metadata 枚举已安装包（本机 pip freeze 受环境干扰报错，改用此方式）
+#
+# 直接依赖（与 requirements.txt 对应）
+ortools==9.15.6755
+fastapi==0.143.3
+uvicorn==0.54.0
+httpx==0.28.1
+pydantic==2.14.1
+python-dotenv==1.2.4
+
+# 传递依赖（由上面 6 个自动带入，锁定后避免版本漂移）
+absl-py==2.5.1
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.15.1
+certifi==2026.7.22
+click==8.5.0
+h11==0.16.0
+httpcore==1.0.9
+idna==3.20
+immutabledict==4.3.1
+numpy==2.5.4
+opentelemetry-api==1.45.1
+pandas==3.0.6
+protobuf==6.33.6
+pydantic_core==2.50.1
+python-dateutil==2.9.0.post0
+six==1.17.0
+starlette==1.8.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+tzdata==2026.5

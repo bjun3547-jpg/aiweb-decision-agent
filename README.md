@@ -46,6 +46,18 @@
 - **人在环确认** —— 低置信度字段以确认卡形式提示用户，而不是直接塞进模型
 - **离线可跑** —— 内置 Vue 3，无 CDN 依赖、无构建步骤；`LLM_MOCK=1` 时无需 API Key 即可体验界面
 
+### 界面预览
+
+**① 一句中文，出一个排班方案**（左：六步执行轨迹，每步耗时可见；右：关键指标 + 待确认项）
+
+![排班结果](docs/img/ui-2-result.png)
+
+> 注意左侧轨迹的耗时分布：**「理解需求」3850 ms、「生成决策说明」2170 ms 是大模型在跑，中间的「精确求解」只有 40 ms**——真正的计算不在大模型里，这就是本项目的核心结构。
+
+**② 无解时不报错，而是说清哪里冲突、并给出可行方案**
+
+![冲突自愈](docs/img/ui-3-conflict.png)
+
 ---
 
 ## 3. 快速开始
@@ -88,6 +100,10 @@ cd backend
 ```
 
 打开 **<http://127.0.0.1:8000>** 即可使用。API 文档在 <http://127.0.0.1:8000/docs>。
+
+启动成功后应该看到这个页面（右上角两个徽标分别是「大模型已连接」和「OR-Tools CP-SAT」，说明 Key 和求解器都就绪）：
+
+![启动成功](docs/img/ui-1-home.png)
 
 **没有 API Key？** 用离线样例模式：
 
@@ -296,7 +312,11 @@ Key 本身有问题。按顺序排查：
 
 **⑦ `账户余额不足（HTTP 402）。`**
 
-去 <https://platform.deepseek.com/top_up> 充值。**充 10 元足够跑完整个赛程**——一次完整排班链路约 2 次模型调用，成本不到 1 分钱。
+去 <https://platform.deepseek.com/top_up> 充值。**充 10 元足够跑完整个赛程。**
+
+成本参考（10/19 实测）：一次完整排班链路 = 2 次模型调用。DeepSeek 的余额是**批量结算**的，连续跑 6 次余额没有可见变化，隔夜才扣——所以别用余额判断"是不是在花钱"。按隔夜结算的差额估算，**一次约 0.1 元量级**，10 元可以跑上百次；30 题评测集加反复重录视频完全够用。
+
+> 想知道当前余额：启动服务后访问 <http://127.0.0.1:8000/api/health>，`llm.balance` 字段里有；或直接跑 `..\.venv\Scripts\python.exe check_key.py`。
 
 ---
 
@@ -319,6 +339,69 @@ git push
 > 写 PowerShell 脚本时有个坑：`.ps1` 文件必须是 **UTF-8 with BOM**。无 BOM 的 UTF-8 在中文 Windows 上会被按 GBK 解析，中文字节错位后会"吃掉"后面的 `}` 和引号，报出一堆位置完全不对的语法错误。
 
 ---
+
+**⑩ 运行 Agent 报 `ModuleNotFoundError`（`No module named 'app'` 或 `No module named 'ortools'`）**
+
+这是两个不同的问题，很容易混在一起：
+
+| 报错里缺的模块 | 真正原因 | 解决 |
+| --- | --- | --- |
+| `app` | 运行方式不对：`agent.py` 是**模块**不是脚本，`from app import prompts` 要求 `backend/` 在模块搜索路径里。直接 `python app/agent.py` 时 Python 只把 `backend/app/` 加进路径，它去找的是 `backend/app/app/prompts.py` | 见下方三种正确跑法 |
+| `ortools` / `fastapi` | **用错了 Python**。系统的 `python`（尤其 Anaconda）不是项目虚拟环境，没装这两个包 | 一律用 `.venv\Scripts\python.exe` |
+
+**最省事的办法：双击 `run_agent.cmd`**（在仓库根目录）。它自动切到 `backend`、自动用项目的 venv、自动加载 `.env`，不依赖你当前在哪个目录，也不依赖系统 `python`。
+
+```powershell
+F:\AIWeb\run_agent.cmd                                          # 内置示例
+F:\AIWeb\run_agent.cmd "我们店 5 个人，下周每天需要 2 个人上班"   # 自定义需求
+```
+
+想在终端里手动跑，四种方式都可以：
+
+```powershell
+cd F:\AIWeb\backend
+
+# ① 模块方式（最标准）
+..\.venv\Scripts\python.exe -m app.agent
+
+# ② 直接跑文件（已做兼容，从仓库根目录也行）
+..\.venv\Scripts\python.exe app\agent.py
+
+# ③ 跑完整接口冒烟测试（推荐，覆盖 5 个接口）
+..\.venv\Scripts\python.exe smoke_test.py --real
+
+# ④ 单独自检 LLM 适配层（查 .env / Key / 网络 / schema 校验）
+..\.venv\Scripts\python.exe app\llm.py
+```
+
+> 只有一种写法仍然不行：在**仓库根目录**执行 `python -m app.agent`。因为 `app` 包在 `backend/` 下面，根目录看不到它。要么先 `cd backend`，要么用 ② 的写法。
+
+---
+
+**⑪ 单独运行 `llm.py`，什么都不输出，`exit code 0`**
+
+**这不是错误。** `llm.py` 是模块，里面只有类和函数，没有顶层可执行语句——直接运行它，Python 定义完这些类就结束了，所以什么都不打印、退出码 0。
+
+同理 `solver/scheduling.py`、`schemas.py`、`whatif.py` 直接运行也都没反应。
+
+想验证 LLM 这一层是否正常，用自检入口：
+
+```powershell
+cd F:\AIWeb\backend
+..\.venv\Scripts\python.exe app\llm.py            # 完整自检
+..\.venv\Scripts\python.exe app\llm.py --text     # 只测文本生成
+..\.venv\Scripts\python.exe app\llm.py --json     # 只测结构化输出
+```
+
+或者直接双击仓库根目录的 `run_llm_check.cmd`，效果一样，还不用管当前在哪个目录。
+
+它会打印 `.env` 是否加载、Key 掩码、base_url、model、mock 状态，然后真实跑一次纯文本生成和一次结构化抽取，最后给出「工作正常 / N 项失败」。
+
+没有 Key 也能自检（不联网）：
+
+```powershell
+$env:LLM_MOCK=1; ..\.venv\Scripts\python.exe app\llm.py
+```
 
 ---
 
@@ -507,7 +590,7 @@ for key, var in x.items():
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
 | GET | `/` | 前端页面 |
-| GET | `/api/health` | 健康检查 + 模型配置状态 |
+| GET | `/api/health` | 健康检查 + 模型配置状态 + **账户余额** |
 | POST | `/api/agent/run` | 自然语言 → 完整决策流程（需 LLM） |
 | POST | `/api/agent/whatif` | 「如果……会怎样」→ 变更 + 重解 + 方案对比（需 LLM） |
 | POST | `/api/solver/solve` | 结构化参数 → 求解（**不需要** LLM，可离线压测） |
@@ -582,11 +665,10 @@ cd backend
 | 成员 | 角色 | 负责模块 | GitHub |
 | --- | --- | --- | --- |
 | 冯璐 | 队长 · 后端与 Agent | Agent 编排、LLM 适配层、求解器集成、部署 | [bjun3547-jpg](https://github.com/bjun3547-jpg) |
-| 李芳青 | 前端与演示视频 | Web 界面、可视化、演示视频制作 | 马斯卡 |
-| 郑茜文 | 技术文档与评测 | 技术文档、评测集、建模与结果验证 | 七七三一七 |
+| 李芳青 | 前端与演示视频 | Web 界面、可视化、演示视频制作 | [maskya](https://github.com/maskya) |
+| 郑茜文 | 技术文档与评测 | 技术文档、评测集、建模与结果验证 | [qiqi77317](https://github.com/qiqi77317) |
 
-> GitHub 列按账号显示名标注，实际提交记录见仓库的 Contributors 列表。
-> 分工细节见 `docs/01-执行手册.md`，开发过程见 `docs/prompts/` 下的协作快照。
+> 提交记录可直接查看仓库的 Contributors 列表，三人账号均已关联。分工细节见 `docs/01-执行手册.md`，开发过程见 `docs/prompts/` 下的协作快照。
 
 ---
 

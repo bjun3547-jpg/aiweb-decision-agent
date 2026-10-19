@@ -19,11 +19,19 @@ from __future__ import annotations
 import asyncio
 import json
 import re
+import sys as _sys
 import time
 from datetime import date as _date
+from datetime import timedelta as _timedelta
+from pathlib import Path as _Path
 from typing import Literal
 
 from pydantic import BaseModel, Field
+
+# 允许 `python app/agent.py` 直接运行：把 backend/ 加进模块搜索路径。
+# 正常 `python -m app.agent` 时 __package__ 是 "app"，这段不执行。
+if __package__ in (None, ""):
+    _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
 
 from app import prompts
 from app.llm import LLMClient, LLMError
@@ -115,6 +123,33 @@ def _find(steps: list[AgentStep], key: str) -> AgentStep:
 
 
 # --------------------------------------------------------------------------- #
+# 日期锚点：把「今天 / 本周 / 下周」算准了再交给模型
+# --------------------------------------------------------------------------- #
+
+_WEEKDAY_CN = ("周一", "周二", "周三", "周四", "周五", "周六", "周日")
+
+
+def _date_anchors(today: _date | None = None) -> dict[str, str]:
+    """算出相对日期对应的绝对日期，供 Prompt 直接引用。
+
+    日期推算是确定性的整数运算，属于「不该让大模型干」的活。
+    实测：当今天恰好是周一时，模型会把「下周一」理解成今天，整张排班表
+    的日期全部前移一周。所以这里先算准，模型只负责照抄。
+    """
+    today = today or _date.today()
+    this_monday = today - _timedelta(days=today.weekday())
+    next_monday = this_monday + _timedelta(days=7)
+    return {
+        "today": today.isoformat(),
+        "weekday": _WEEKDAY_CN[today.weekday()],
+        "this_monday": this_monday.isoformat(),
+        "this_sunday": (this_monday + _timedelta(days=6)).isoformat(),
+        "next_monday": next_monday.isoformat(),
+        "next_sunday": (next_monday + _timedelta(days=6)).isoformat(),
+    }
+
+
+# --------------------------------------------------------------------------- #
 # Agent
 # --------------------------------------------------------------------------- #
 
@@ -128,7 +163,7 @@ class DecisionAgent:
     # -- S1：自然语言 → 结构化参数 ---------------------------------------- #
 
     async def understand(self, text: str) -> ExtractionResult:
-        system = prompts.EXTRACTION_SYSTEM.format(today=_date.today().isoformat())
+        system = prompts.EXTRACTION_SYSTEM.format(**_date_anchors())
         user = prompts.EXTRACTION_USER.format(text=text.strip())
         extraction, _raw = await self.llm.chat_json(system, user, ExtractionResult)
 
@@ -508,3 +543,74 @@ class DecisionAgent:
 
         run.ok = bool(after.assignments) or after.status in ("OPTIMAL", "FEASIBLE")
         return run
+
+
+# --------------------------------------------------------------------------- #
+# 命令行入口：想在终端里单独跑一次 Agent 时用
+#
+#   cd backend
+#   ..\.venv\Scripts\python.exe -m app.agent "我们便利店下周一到周日要排班……"
+#
+# 注意：必须用 `-m app.agent`，不能直接 `python app/agent.py`。
+# 直接运行文件时 sys.path 里是 backend/app/，`from app import prompts` 找不到包。
+# --------------------------------------------------------------------------- #
+
+_DEMO_TEXT = (
+    "我们便利店下周一到周日要排班。一共 7 个店员：张伟、李娜、王强、刘洋、陈静、赵磊、孙悦。"
+    "每天分早班和晚班，晚班需要会收银的人。每个班次每天要 2 个人。"
+    "每人每周最多上 5 天班，每周至少休息 1 天。张伟下周三请假，李娜周六希望休息。"
+)
+
+
+async def _cli() -> None:
+    import sys
+    from pathlib import Path
+
+    # 单独跑本文件时，.env 不会被自动加载（平时由 main.py 负责），这里补上
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+    except ImportError:
+        pass
+
+    text = " ".join(sys.argv[1:]).strip() or _DEMO_TEXT
+    if not sys.argv[1:]:
+        print("（未提供需求文本，使用内置示例）\n")
+
+    agent = DecisionAgent()
+    if not agent.llm.enabled:
+        print("❌ 未配置 API Key。请在 backend/.env 里设置 DEEPSEEK_API_KEY，")
+        print("   或设置 LLM_MOCK=1 使用离线样例数据。")
+        return
+
+    run = await agent.run(text)
+
+    print("=" * 70)
+    print("六步执行轨迹")
+    print("=" * 70)
+    for s in run.steps:
+        mark = {"ok": "[ok   ]", "warn": "[warn ]", "error": "[error]", "pending": "[     ]"}.get(
+            s.status, "[?]"
+        )
+        print(f"  {mark} {s.name:<8} {s.duration_ms:>5}ms  {s.detail}")
+
+    print()
+    print("=" * 70)
+    print(f"结果：ok={run.ok} | status={(run.result.status if run.result else None)}")
+    print("=" * 70)
+    if run.warnings:
+        print("警告：")
+        for w in run.warnings:
+            print(f"  - {w}")
+        print()
+    if run.narrative:
+        print("决策说明：")
+        print(run.narrative)
+    if run.schedule_table_md:
+        print()
+        print(run.schedule_table_md)
+
+
+if __name__ == "__main__":
+    asyncio.run(_cli())

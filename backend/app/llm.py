@@ -12,10 +12,18 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import sys as _sys
+import time
+from pathlib import Path as _Path
 from typing import Any, TypeVar
 
 import httpx
 from pydantic import BaseModel, ValidationError
+
+# 允许 `python app/llm.py` 直接运行自检：把 backend/ 加进模块搜索路径。
+# 正常 `python -m app.llm` 时 __package__ 是 "app"，这段不执行。
+if __package__ in (None, ""):
+    _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -249,3 +257,122 @@ class LLMClient:
         }
         data = await self._post(payload)
         return (data.get("choices") or [{}])[0].get("message", {}).get("content", "").strip()
+
+
+# --------------------------------------------------------------------------- #
+# 自检入口：python app/llm.py [--text] [--json]
+#
+# llm.py 本身是模块，没有入口——直接 `python llm.py` 什么都不会发生，
+# 这是正常现象（退出码 0 不代表"跑成功了"，只代表"什么都没干"）。
+# 这个 __main__ 块就是给它补一个能真正跑起来的入口，用来单独验证：
+#   ① .env 有没有被读到  ② Key 有没有效  ③ 网络通不通
+#   ④ 结构化输出的 schema 校验和重试是不是真的在工作
+# --------------------------------------------------------------------------- #
+
+
+def _mask(key: str) -> str:
+    if not key:
+        return "（未配置）"
+    return f"{key[:5]}***（长度 {len(key)}）"
+
+
+async def _self_check(only: str | None = None) -> int:
+    from dotenv import load_dotenv  # 单独跑本文件时 .env 不会自动加载，这里补上
+
+    env_file = _Path(__file__).resolve().parent.parent / ".env"
+    loaded = env_file.exists() and bool(load_dotenv(env_file))
+
+    client = LLMClient()
+    mock = _mock_enabled()
+
+    print("=" * 62)
+    print("llm.py 自检")
+    print("=" * 62)
+    print(f"配置文件   : {env_file}")
+    print(f"             {'[已加载]' if loaded else '[未找到，将只用系统环境变量]'}")
+    print(f"base_url   : {client.base_url}")
+    print(f"model      : {client.model}")
+    print(f"api_key    : {_mask(client.api_key)}")
+    print(f"mock 模式  : {'开启（LLM_MOCK=1，不联网）' if mock else '关闭（真实调用）'}")
+    print(f"超时       : {client.timeout}s")
+    print()
+
+    if not client.enabled:
+        print("[FAIL] 既没有 API Key，也没有开 LLM_MOCK。")
+        print("       请在 backend/.env 里设置 DEEPSEEK_API_KEY，或设 LLM_MOCK=1 离线自检。")
+        return 1
+
+    failed = 0
+
+    # ---- 1) 纯文本生成 -------------------------------------------------- #
+    if only in (None, "text"):
+        print("[1/2] chat_text()  纯文本生成")
+        t0 = time.perf_counter()
+        try:
+            out = await client.chat_text(
+                "你是一名运筹优化顾问。用一句中文回答，不要超过 40 字。",
+                "用一句话说明为什么排班问题要用求解器而不是人工排。",
+            )
+            ms = (time.perf_counter() - t0) * 1000
+            print(f"      耗时 {ms:.0f}ms")
+            print(f"      输出：{out}")
+            print("      结论：通过")
+        except Exception as exc:  # noqa: BLE001 - 自检要如实打印任何异常
+            failed += 1
+            print(f"      失败：{type(exc).__name__}: {exc}")
+        print()
+
+    # ---- 2) 结构化输出（含 schema 校验） --------------------------------- #
+    if only in (None, "json"):
+        from app import prompts
+        from app.agent import _date_anchors
+        from app.schemas import ExtractionResult
+
+        print("[2/2] chat_json()  结构化输出 + schema 校验")
+        t0 = time.perf_counter()
+        try:
+            obj, raw = await client.chat_json(
+                prompts.EXTRACTION_SYSTEM.format(**_date_anchors()),
+                prompts.EXTRACTION_USER.format(
+                    text="我们店 3 个人，下周一到周日每天早班晚班各 1 人，每人最多上 5 天。"
+                ),
+                ExtractionResult,
+            )
+            ms = (time.perf_counter() - t0) * 1000
+            p = obj.problem
+            print(f"      耗时 {ms:.0f}ms")
+            print(f"      原始输出 {len(raw)} 字符 → Pydantic 校验：通过")
+            print(f"      解析结果：{len(p.employees)} 人 / {len(p.shifts)} 班次 / {len(p.dates)} 天")
+            if p.dates:
+                print(f"      日期区间：{p.dates[0]} ~ {p.dates[-1]}")
+            print(f"      摘要：{obj.summary}")
+            print("      结论：通过")
+        except Exception as exc:  # noqa: BLE001
+            failed += 1
+            print(f"      失败：{type(exc).__name__}: {exc}")
+        print()
+
+    print("=" * 62)
+    print("结论：llm.py 工作正常" if not failed else f"结论：{failed} 项失败，见上方输出")
+    print("=" * 62)
+    return 0 if not failed else 1
+
+
+def _main() -> None:
+    args = [a for a in _sys.argv[1:] if a.strip()]
+    only = None
+    if "--text" in args:
+        only = "text"
+    elif "--json" in args:
+        only = "json"
+    elif args and args[0] in ("-h", "--help"):
+        print("用法：python app/llm.py [--text | --json]")
+        print("  （不带参数）完整自检：配置 + 纯文本 + 结构化输出")
+        print("  --text      只测纯文本生成")
+        print("  --json      只测结构化输出与 schema 校验")
+        return
+    _sys.exit(asyncio.run(_self_check(only)))
+
+
+if __name__ == "__main__":
+    _main()
