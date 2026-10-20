@@ -111,8 +111,19 @@
   table.sched td.on{color:#fff; font-weight:600}
   table.sched td.name{background:transparent; color:var(--ink); font-weight:600; font-size:12.5px}
   table.sched td.num{background:transparent; font-variant-numeric:tabular-nums; color:var(--muted); font-size:12px}
+  /* ---- 工时热力图：颜色深浅 = 这一周上班天数 ---- */
+  table.sched td.heat{
+    font-weight:700; font-size:12px; border-radius:7px;
+    font-variant-numeric:tabular-nums; cursor:default;
+  }
+  .heatbar{
+    display:inline-block; width:70px; height:9px; border-radius:3px;
+    margin:0 6px; vertical-align:middle; border:1px solid var(--line);
+    background:linear-gradient(90deg, #dbeafe, #1d4ed8);
+  }
   .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:12px; color:var(--muted)}
   .legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:middle}
+  .legend .heat-legend{margin-left:auto}
 
   /* ---- what-if 对比 ---- */
   table.sched td.chg{position:relative; box-shadow:inset 0 0 0 2px #f59e0b; font-weight:700}
@@ -147,6 +158,31 @@
   .kpi .k{font-size:11.5px; color:var(--muted)}
   .kpi .v{font-size:18px; font-weight:700; font-variant-numeric:tabular-nums}
   .side .card + .card{margin-top:16px}
+  /* ---- 工时均衡度卡片 ---- */
+  .tw{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  .bal{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap}
+  .bal-num{font-size:30px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1}
+  .bal-num u{font-size:12px; font-weight:500; color:var(--muted); text-decoration:none; margin-left:4px}
+  .bal-num.good{color:#047857}
+  .bal-num.mid{color:#b45309}
+  .bal-num.bad{color:#b91c1c}
+  .bal-tag{font-size:11.5px; padding:3px 8px; border-radius:20px; border:1px solid var(--line); color:var(--muted)}
+  .bal-tag.good{background:#ecfdf5; color:#047857; border-color:#d1fae5}
+  .bal-tag.mid{background:#fffbeb; color:#b45309; border-color:#fde68a}
+  .bal-tag.bad{background:#fef2f2; color:#b91c1c; border-color:#fecaca}
+  .bal-meta{font-size:11.5px; color:var(--muted); margin-top:5px; font-variant-numeric:tabular-nums}
+  .scale{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px; font-size:11px; color:var(--muted)}
+  .scale span{
+    border:1px solid var(--line); border-radius:6px; padding:2px 7px;
+    background:#fafbff; white-space:nowrap;
+  }
+  .scale span.on{font-weight:700; background:#eef2ff; border-color:#c7d2fe; color:#3730a3}
+  .bars{margin-top:12px; border-top:1px dashed var(--line); padding-top:10px}
+  .bar-row{display:grid; grid-template-columns:56px minmax(0,1fr) 22px; gap:8px; align-items:center; margin-bottom:6px; font-size:12px}
+  .bar-name{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink)}
+  .bar-track{height:9px; background:#f3f4f6; border-radius:5px; overflow:hidden}
+  .bar-track i{display:block; height:100%; border-radius:5px; transition:width .35s}
+  .bar-val{text-align:right; color:var(--muted); font-variant-numeric:tabular-nums}
   .conf{font-size:12.5px; padding:8px 10px; border-radius:9px; background:#fffbeb; border:1px solid #fde68a; margin-bottom:8px}
   .conf b{display:block; color:#92400e}
   .viol{font-size:12.5px; padding:8px 10px; border-radius:9px; background:#fef2f2; border:1px solid #fecaca; color:#991b1b; margin-bottom:8px}
@@ -154,10 +190,101 @@
   @keyframes sp{to{transform:rotate(360deg)}}
   code{background:#f3f4f6; padding:1px 5px; border-radius:5px; font-size:12px}
   .hint{font-size:12px; color:var(--muted); margin-top:8px}
+
+  /* ---- 加载动画：顶部进度条 + 骨架屏 + 步骤脉冲 ---- */
+  .topbar-progress{
+    position:fixed; top:0; left:0; right:0; height:3px; z-index:99;
+    overflow:hidden; background:transparent; pointer-events:none;
+  }
+  .topbar-progress i{
+    display:block; height:100%; width:34%;
+    background:linear-gradient(90deg,#6366f1,#0ea5e9,#6366f1);
+    animation:slide 1.15s ease-in-out infinite;
+  }
+  @keyframes slide{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}
+  .dot.running{animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .sk{
+    background:linear-gradient(90deg,#eef0f6 25%,#f8f9fd 37%,#eef0f6 63%);
+    background-size:400% 100%; animation:sk 1.3s ease infinite; border-radius:8px;
+  }
+  @keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}
+  .sk-line{height:11px; margin:11px 0}
+  .sk-line.w70{width:70%} .sk-line.w45{width:45%} .sk-line.w90{width:90%}
+  .sk-table{display:grid; gap:5px; margin-top:12px}
+  .sk-row{display:grid; grid-template-columns:48px repeat(7, minmax(0,1fr)) 34px; gap:4px}
+  .sk-row span{height:24px; border-radius:6px}
+  .sk-note{font-size:12px; color:var(--muted); margin-top:10px; text-align:center}
+
+  /* ---- 错误提示：分类 + 人话建议 + 重试 ---- */
+  .errbox{
+    border:1px solid #fecaca; background:#fef2f2; border-radius:12px;
+    padding:13px 15px; margin-top:12px;
+  }
+  .errbox .eh{
+    display:flex; align-items:center; gap:8px;
+    font-weight:650; color:#991b1b; font-size:13.5px;
+  }
+  .errbox .ico{
+    width:19px; height:19px; border-radius:50%; background:#ef4444; color:#fff;
+    display:grid; place-items:center; font-size:12px; font-weight:700; flex:none;
+  }
+  .errbox .ex{
+    margin-left:auto; border:none; background:transparent; color:#9ca3af;
+    font-size:16px; line-height:1; padding:2px 6px; cursor:pointer; border-radius:6px;
+  }
+  .errbox .ex:hover{background:#fee2e2; color:#991b1b}
+  .errbox .em{font-size:13px; color:#7f1d1d; margin-top:6px; word-break:break-word}
+  .errbox .ea{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px}
+  .errbox .ea button{padding:6px 14px; font-size:12.5px}
+  .errbox .ea button.retry{background:#fff; border-color:#fca5a5; color:#b91c1c; font-weight:600}
+  .errbox .ea button.retry:hover{background:#fff1f2}
+  .errbox .ed{
+    margin-top:9px; font-size:11.5px; color:#9f1239; background:#fff1f2;
+    border:1px dashed #fda4af; border-radius:8px; padding:8px 10px;
+    white-space:pre-wrap; word-break:break-all; max-height:150px; overflow:auto;
+  }
+
+  /* ---- 手机端：不崩、能横向滑动看表格 ---- */
+  @media (max-width:980px){
+    main{grid-template-columns:minmax(0,1fr)}
+    .side .card + .card{margin-top:14px}
+  }
+  @media (max-width:640px){
+    html{-webkit-text-size-adjust:100%}
+    body{overflow-x:hidden}
+    main{padding:14px 11px 56px; gap:14px}
+    .card{padding:14px 14px}
+    header{padding:12px 14px; flex-wrap:wrap; gap:8px; position:static}
+    header h1{font-size:15px}
+    header .sub{font-size:11.5px}
+    .badges{margin-left:0; width:100%}
+    textarea, input{font-size:16px} /* iOS 上 <16px 会自动放大页面 */
+    button{min-height:40px}
+    button.primary{width:100%; padding:11px 18px}
+    .row{gap:8px}
+    .row button.chip{flex:1 1 auto; text-align:center}
+    table.sched{min-width:480px; border-spacing:3px; font-size:11.5px}
+    .sk-row{grid-template-columns:44px repeat(7, minmax(0,1fr)) 30px}
+    .kpi{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .cmp{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .legend{gap:8px 12px}
+    .legend .heat-legend{margin-left:0; width:100%}
+    .wi-input{flex-direction:column}
+    .wi-input input{width:100%}
+    .wi-input button.primary{width:100%}
+    .bal-num{font-size:26px}
+    .bar-row{grid-template-columns:52px minmax(0,1fr) 20px}
+    .scrolltip{font-size:11px; color:#9ca3af; margin-top:6px}
+    .narrative{padding:13px 14px; font-size:13px}
+  }
+  .scrolltip{display:none}
+  @media (max-width:640px){ .scrolltip{display:block} }
 </style>
 </head>
 <body>
 <div id="app">
+  <div class="topbar-progress" v-if="loading || wiLoading"><i></i></div>
   <header>
     <div>
       <h1>大模型驱动的智能运筹决策 Agent</h1>
@@ -192,8 +319,39 @@
 
       <div class="card" style="margin-top:16px">
         <h2>② Agent 执行轨迹</h2>
-        <div class="empty" v-if="!run && !error">还没有运行。填好需求后点「开始排班」。</div>
-        <div class="alert err" v-if="error">{{ error }}</div>
+        <div class="empty" v-if="!run && !error && !loading">还没有运行。填好需求后点「开始排班」。</div>
+
+        <!-- 加载中的骨架屏 -->
+        <div v-if="loading">
+          <ul class="steps">
+            <li v-for="s in skView" :key="s.key">
+              <span class="dot" :class="s.cls">{{ s.cls === 'ok' ? '✓' : (s.cls === 'running' ? '…' : '') }}</span>
+              <span><div class="step-name">{{ s.name }}</div>
+                <div class="step-detail" v-if="s.cls === 'running'">{{ s.detail }}</div></span>
+              <span class="ms"></span>
+            </li>
+          </ul>
+          <div class="sk sk-line w45" style="margin-top:14px"></div>
+          <div class="sk sk-line w90"></div>
+          <div class="sk sk-line w70"></div>
+        </div>
+
+        <!-- 错误提示：分类 + 人话建议 + 重试 -->
+        <div class="errbox" v-if="error">
+          <div class="eh">
+            <span class="ico">!</span>{{ errInfo.title }}
+            <button class="ex" @click="error = ''" title="关闭">×</button>
+          </div>
+          <div class="em">{{ errInfo.msg }}</div>
+          <div class="ea">
+            <button class="retry" @click="submit" :disabled="loading">重新排班</button>
+            <button class="chip" @click="showErrDetail = !showErrDetail">
+              {{ showErrDetail ? '收起' : '查看' }}技术细节
+            </button>
+          </div>
+          <div class="ed" v-if="showErrDetail">{{ error }}</div>
+        </div>
+
         <ul class="steps" v-if="run && run.steps">
           <li v-for="s in run.steps" :key="s.key">
             <span class="dot" :class="s.status">{{ icon(s.status) }}</span>
@@ -226,14 +384,28 @@
         </div>
       </div>
 
+      <!-- ⑤ 排班表（加载中：骨架屏） -->
+      <div class="card" style="margin-top:16px" v-if="loading && !matrix">
+        <h2>⑤ 排班表</h2>
+        <div class="sk-table">
+          <div class="sk-row" v-for="(r, ri) in 7" :key="ri">
+            <span class="sk"></span>
+            <span class="sk" v-for="n in 7" :key="n"></span>
+            <span class="sk"></span>
+          </div>
+        </div>
+        <div class="sk-note">正在求解，表格马上出来…</div>
+      </div>
+
       <div class="card" style="margin-top:16px" v-if="matrix">
         <h2>⑤ 排班表</h2>
+        <div class="tw">
         <table class="sched">
           <thead>
             <tr>
               <th class="name">员工</th>
               <th v-for="d in matrix.dates" :key="d">{{ d.slice(5) }}</th>
-              <th>上班</th><th>休息</th>
+              <th>上班</th><th>休息</th><th>工时</th>
             </tr>
           </thead>
           <tbody>
@@ -245,19 +417,28 @@
               </td>
               <td class="num">{{ r.worked }}</td>
               <td class="num">{{ matrix.dates.length - r.worked }}</td>
+              <td class="heat" :style="{background:r.heatColor, color:r.heatText}"
+                  :title="matrix.dates.length + ' 天里上了 ' + r.worked + ' 天'">{{ r.worked }}</td>
             </tr>
           </tbody>
         </table>
+        </div>
+        <div class="scrolltip">← 左右滑动可查看全部日期 →</div>
         <div class="legend">
           <span v-for="(s, i) in matrix.shifts" :key="s.id">
             <i :style="{background: shiftColor(i)}"></i>{{ s.name }}
           </span>
           <span><i style="background:#fafafe;border:1px solid var(--line)"></i>休息</span>
+          <span class="heat-legend">
+            工时列<span class="heatbar"></span>越深 = 上班越多
+            <b v-if="matrix.maxWorked === matrix.minWorked" style="color:#047857">（全员 {{ matrix.maxWorked }} 天 · 完全均衡）</b>
+            <b v-else>（{{ matrix.minWorked }}–{{ matrix.maxWorked }} 天，差 {{ matrix.maxWorked - matrix.minWorked }} 天）</b>
+          </span>
         </div>
       </div>
 
       <!-- ⑥ What-if -->
-      <div class="card" style="margin-top:16px" v-if="run && run.problem && run.result && run.result.status !== 'INFEASIBLE' && run.result.assignments.length">
+      <div class="card" style="margin-top:16px" v-if="run && run.problem && run.result && run.result.status !== 'INFEASIBLE' && (run.result.assignments || []).length">
         <h2>⑥ 如果……会怎样？（方案对比）</h2>
         <div class="wi-input">
           <input v-model="wiText" :disabled="wiLoading" @keyup.enter="runWhatIf"
@@ -270,7 +451,27 @@
           <button class="chip" v-for="(s, i) in wiSamples" :key="i" @click="wiText = s" :disabled="wiLoading">{{ s }}</button>
         </div>
 
-        <div class="alert err" v-if="wiError" style="margin-top:12px">{{ wiError }}</div>
+        <div v-if="wiLoading" style="margin-top:14px">
+          <div class="sk sk-line w45"></div>
+          <div class="sk sk-line w90"></div>
+          <div class="sk sk-line w70"></div>
+          <div class="sk-note">正在重新求解并对比…</div>
+        </div>
+
+        <div class="errbox" v-if="wiError">
+          <div class="eh">
+            <span class="ico">!</span>{{ wiErrInfo.title }}
+            <button class="ex" @click="wiError = ''" title="关闭">×</button>
+          </div>
+          <div class="em">{{ wiErrInfo.msg }}</div>
+          <div class="ea">
+            <button class="retry" @click="runWhatIf" :disabled="wiLoading">重试对比</button>
+            <button class="chip" @click="showWiDetail = !showWiDetail">
+              {{ showWiDetail ? '收起' : '查看' }}技术细节
+            </button>
+          </div>
+          <div class="ed" v-if="showWiDetail">{{ wiError }}</div>
+        </div>
 
         <div v-if="wi && wi.diff">
           <div class="alert info" v-if="wi.understood" style="margin-top:12px">
@@ -320,12 +521,13 @@
             <div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">
               新排班表（<span style="color:#f59e0b;font-weight:600">黄框</span>表示相对原方案有变动）
             </div>
+            <div class="tw">
             <table class="sched">
               <thead>
                 <tr>
                   <th class="name">员工</th>
                   <th v-for="d in wiMatrix.dates" :key="d">{{ d.slice(5) }}</th>
-                  <th>上班</th>
+                  <th>上班</th><th>工时</th>
                 </tr>
               </thead>
               <tbody>
@@ -338,9 +540,11 @@
                     {{ c.after ? c.after.label : '休' }}
                   </td>
                   <td class="num">{{ r.worked }}</td>
+                  <td class="heat" :style="{background:r.heatColor, color:r.heatText}">{{ r.worked }}</td>
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
 
           <div class="alert info" v-if="wi.narrative" style="white-space:pre-wrap">
@@ -358,13 +562,51 @@
       <div class="card" v-if="run && run.problem">
         <h2>关键指标</h2>
         <div class="kpi">
-          <div><div class="k">员工</div><div class="v">{{ run.problem.employees.length }}</div></div>
-          <div><div class="k">天数</div><div class="v">{{ run.problem.dates.length }}</div></div>
-          <div><div class="k">{{ run.result && run.result.status === 'INFEASIBLE' ? '参考方案' : '总排班' }}</div><div class="v">{{ run.result ? run.result.assignments.length : 0 }}</div></div>
-          <div><div class="k">求解</div><div class="v">{{ run.result ? run.result.solve_time_seconds.toFixed(2) : '—' }}<span style="font-size:11px">s</span></div></div>
+          <div><div class="k">员工</div><div class="v">{{ (run.problem.employees || []).length }}</div></div>
+          <div><div class="k">天数</div><div class="v">{{ (run.problem.dates || []).length }}</div></div>
+          <div><div class="k">{{ run.result && run.result.status === 'INFEASIBLE' ? '参考方案' : '总排班' }}</div><div class="v">{{ run.result ? (run.result.assignments || []).length : 0 }}</div></div>
+          <div><div class="k">求解</div><div class="v">{{ run.result ? (run.result.solve_time_seconds || 0).toFixed(2) : '—' }}<span style="font-size:11px">s</span></div></div>
+          <div v-if="matrix">
+            <div class="k">天差</div>
+            <div class="v" :style="{color: balance.level === 'good' ? '#047857' : (balance.level === 'mid' ? '#b45309' : '#b91c1c')}">
+              {{ matrix.maxWorked - matrix.minWorked }}<span style="font-size:11px">天</span>
+            </div>
+          </div>
         </div>
         <div class="hint" v-if="run.result">
           求解状态 <b>{{ run.result.status }}</b>
+          <span v-if="matrix"> · 工时均衡度 <b>{{ balance.text }}</b>（最忙 {{ matrix.maxWorked }} 天 / 最闲 {{ matrix.minWorked }} 天）</span>
+        </div>
+      </div>
+
+      <!-- 工时均衡度：max - min，并列出每人天数 -->
+      <div class="card" v-if="matrix">
+        <h2>工时均衡度</h2>
+        <div class="bal">
+          <div class="bal-num" :class="balance.level">{{ matrix.maxWorked - matrix.minWorked }}<u>天差</u></div>
+          <span class="bal-tag" :class="balance.level">{{ balance.text }}</span>
+        </div>
+        <div class="bal-meta">
+          最忙 {{ matrix.maxWorked }} 天 · 最闲 {{ matrix.minWorked }} 天 · 人均 {{ balance.avg }} 天
+        </div>
+        <div class="scale" title="工时均衡度 = 最忙的人上班天数 − 最闲的人上班天数，越小越均衡">
+          <span :class="{on: balance.level === 'good'}">0 天 · 完全均衡</span>
+          <span :class="{on: balance.level === 'mid'}">1–2 天 · 比较均衡</span>
+          <span :class="{on: balance.level === 'bad'}">≥3 天 · 差距偏大</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row" v-for="r in balance.rows" :key="r.id">
+            <span class="bar-name">{{ r.name }}</span>
+            <span class="bar-track"><i :style="{width: balance.width(r.worked), background: barColor(r.heat)}"></i></span>
+            <span class="bar-val">{{ r.worked }}</span>
+          </div>
+        </div>
+        <div class="hint">
+          条形越长 = 上班越多，颜色深浅与左表「工时」列一致
+        </div>
+        <div class="hint" v-if="wiBalance">
+          改动后：<b :style="{color: wiBalance.level === 'good' ? '#047857' : (wiBalance.level === 'mid' ? '#b45309' : '#b91c1c')}">{{ wiBalance.gap }} 天差 · {{ wiBalance.text }}</b>
+          （{{ wiBalance.mn }}–{{ wiBalance.mx }} 天）
         </div>
       </div>
 
@@ -411,12 +653,14 @@ createApp({
     const loading = ref(false);
     const run = ref(null);
     const error = ref("");
+    const showErrDetail = ref(false);   // 错误卡片里的「技术细节」是否展开
 
     // what-if 状态
     const wi = ref(null);
     const wiText = ref("");
     const wiLoading = ref(false);
     const wiError = ref("");
+    const showWiDetail = ref(false);
     const wiSamples = [
       "如果张伟下周只能上 2 天班会怎样？",
       "如果每班需要的人数加到 3 人？",
@@ -436,46 +680,167 @@ createApp({
 
     function useSample(s) { text.value = s.text; }
 
-    async function submit() {
-      loading.value = true; error.value = ""; run.value = null;
-      wi.value = null; wiText.value = ""; wiError.value = "";
+    // ---- 加载骨架：按后端真实步骤推进，等待过程看得见 ----
+    const SK_STEPS = [
+      { key: "understand", name: "理解需求",     tip: "正在把中文需求翻译成结构化参数…" },
+      { key: "validate",   name: "数据校验",     tip: "正在检查人数、日期、班次是否自洽…" },
+      { key: "model",      name: "数学建模",     tip: "正在把规则转成 CP-SAT 约束…" },
+      { key: "solve",      name: "精确求解",     tip: "正在搜索最优解（这一步通常最耗时）…" },
+      { key: "diagnose",   name: "冲突诊断",     tip: "正在检查是否有规则互相矛盾…" },
+      { key: "explain",    name: "生成决策说明", tip: "正在把结果写成中文建议…" }
+    ];
+    const skStepIdx = ref(0);
+    let skTimer = null;
+    const skView = computed(() => SK_STEPS.map((s, i) => ({
+      key: s.key,
+      name: s.name,
+      cls: i < skStepIdx.value ? "ok" : (i === skStepIdx.value ? "running" : "pending"),
+      detail: i === skStepIdx.value ? s.tip : ""
+    })));
+
+    // ---- 统一 POST：带超时保护，避免请求卡死界面 ----
+    async function postJSON(url, body, timeoutMs) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), timeoutMs || 90000);
       try {
-        const r = await fetch("/api/agent/run", {
+        const r = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: text.value })
+          body: JSON.stringify(body),
+          signal: ctrl.signal
         });
-        const data = await r.json();
-        if (!r.ok) throw new Error(data.detail || ("HTTP " + r.status));
+        let data = null;
+        try { data = await r.json(); }
+        catch (e) {
+          throw new Error("服务返回的不是 JSON（HTTP " + r.status + "）：后端可能没启动或已崩溃");
+        }
+        if (!r.ok) throw new Error((data && data.detail) || ("HTTP " + r.status));
+        return data;
+      } catch (e) {
+        if (e && e.name === "AbortError") throw new Error("timeout");
+        throw e;
+      } finally { clearTimeout(t); }
+    }
+
+    // ---- 错误分类：把技术报错翻译成人话 ----
+    function parseErr(msg) {
+      const m = String(msg || "").replace(/^(请求失败|对比失败)：/, "");
+      if (/timeout|超时/i.test(m)) {
+        return { title: "求解超时", msg: "这次算得太久（超过 90 秒自动放弃）。可以把天数或人数改小一点再试。" };
+      }
+      if (/Failed to fetch|NetworkError|ECONNREFUSED|连不上|请求失败/i.test(m)) {
+        return { title: "连不上服务器", msg: "后端没有响应。请确认后端已启动（uvicorn 跑在 8011 端口），再点「重新排班」。" };
+      }
+      if (/HTTP 5\d\d/.test(m)) {
+        return { title: "服务端出错", msg: "后端处理时报错了（" + m + "）。常见原因是大模型 Key 失效，看下后端终端日志。" };
+      }
+      if (/HTTP 4\d\d/.test(m)) {
+        return { title: "请求被拒绝", msg: "请求有问题（" + m + "）。检查输入是否为空或过长。" };
+      }
+      if (!m) return { title: "运行失败", msg: "未知错误，请重试。" };
+      return { title: "运行失败", msg: m };
+    }
+    const errInfo = computed(() => parseErr(error.value));
+    const wiErrInfo = computed(() => parseErr(wiError.value));
+
+    async function submit() {
+      if (loading.value) return;
+      loading.value = true; error.value = ""; run.value = null;
+      wi.value = null; wiText.value = ""; wiError.value = "";
+      showErrDetail.value = false; showWiDetail.value = false;
+      skStepIdx.value = 0;
+      clearInterval(skTimer);
+      skTimer = setInterval(() => {
+        if (skStepIdx.value < SK_STEPS.length - 1) skStepIdx.value++;
+      }, 900);
+      try {
+        const data = await postJSON("/api/agent/run", { text: text.value });
         run.value = data;
         if (!data.ok && data.error) error.value = data.error;
       } catch (e) {
-        error.value = "请求失败：" + e.message;
+        error.value = "请求失败：" + (e && e.message ? e.message : e);
       } finally {
+        clearInterval(skTimer); skTimer = null;
         loading.value = false;
       }
     }
 
     const matrix = computed(() => {
       const r = run.value;
-      if (!r || !r.problem || !r.result || !r.result.assignments.length) return null;
-      const p = r.problem;
+      // 后端字段缺失时不应该白屏：一律走空值兜底
+      if (!r || !r.problem || !r.result) return null;
+      const p = r.problem || {};
+      const emps = p.employees || [], dates = p.dates || [], shifts = p.shifts || [];
+      const asg = r.result.assignments || [];
+      if (!asg.length || !emps.length || !dates.length) return null;
       const map = {};
-      r.result.assignments.forEach(a => { map[a.employee_id + "|" + a.date] = a; });
-      return {
-        dates: p.dates,
-        shifts: p.shifts,
-        rows: p.employees.map(e => ({
+      asg.forEach(a => { if (a) map[a.employee_id + "|" + a.date] = a; });
+      const rows = emps.map(e => ({
           id: e.id,
           name: e.name,
-          cells: p.dates.map(d => {
+          cells: dates.map(d => {
             const a = map[e.id + "|" + d];
             if (!a) return null;
-            const idx = p.shifts.findIndex(s => s.id === a.shift_id);
+            const idx = shifts.findIndex(s => s.id === a.shift_id);
             return { label: a.shift_name, color: shiftColor(idx < 0 ? 0 : idx) };
           }),
-          worked: p.dates.filter(d => map[e.id + "|" + d]).length
-        }))
+          worked: dates.filter(d => map[e.id + "|" + d]).length
+        }));
+      const ws = rows.map(x => x.worked);
+      rows.forEach(x => {
+        // 热力强度：在本方案「最闲 ↔ 最忙」区间里的位置（0~1）
+        x.heat = heatRatio(x.worked, ws);
+        x.heatColor = getHeatBgColor(x.worked, ws);
+        x.heatText = heatTextColor(x.heat);
+      });
+      return {
+        dates: dates,
+        shifts: shifts,
+        rows: rows,
+        maxWorked: ws.length ? Math.max.apply(null, ws) : 0,
+        minWorked: ws.length ? Math.min.apply(null, ws) : 0
+      };
+    });
+
+    // ---- 全员上班天数列表：热力色函数用它做归一化参照 ----
+    const allWorkedList = computed(() => {
+      if (!matrix.value) return [];
+      return matrix.value.rows.map(r => r.worked);
+    });
+
+    // ---- 工时均衡度：max - min + 每人天数条形 ----
+    const balance = computed(() => {
+      const m = matrix.value;
+      if (!m || !m.rows.length) {
+        return { level: 'good', text: '—', avg: '—', rows: [], width: () => '0%' };
+      }
+      const gap = m.maxWorked - m.minWorked;
+      const total = m.rows.reduce((s, x) => s + x.worked, 0);
+      const denom = Math.max(m.maxWorked, 1);
+      const rows = m.rows.slice().sort((a, b) =>
+        b.worked - a.worked || String(a.name).localeCompare(String(b.name), 'zh'));
+      return {
+        gap: gap,
+        level: gap === 0 ? 'good' : (gap <= 2 ? 'mid' : 'bad'),
+        text: gap === 0 ? '完全均衡' : (gap <= 2 ? '比较均衡' : '差距偏大'),
+        avg: (total / m.rows.length).toFixed(1),
+        rows: rows,
+        width: (w) => Math.max(6, Math.round(w / denom * 100)) + '%'
+      };
+    });
+
+    // ---- what-if 之后的均衡度（用 per_employee.after 复算，用来和原方案对比）----
+    const wiBalance = computed(() => {
+      const w = wi.value;
+      if (!w || !w.diff || !w.diff.per_employee || !w.diff.per_employee.length) return null;
+      const xs = w.diff.per_employee.map(r => Number(r.after) || 0);
+      const mx = Math.max.apply(null, xs);
+      const mn = Math.min.apply(null, xs);
+      const gap = mx - mn;
+      return {
+        gap: gap, mx: mx, mn: mn,
+        level: gap === 0 ? 'good' : (gap <= 2 ? 'mid' : 'bad'),
+        text: gap === 0 ? '完全均衡' : (gap <= 2 ? '比较均衡' : '差距偏大')
       };
     });
 
@@ -499,44 +864,81 @@ createApp({
       };
       const emps = (w.patched_problem || p).employees;
 
-      return {
-        dates: p.dates,
-        rows: emps.map(e => {
-          const cells = p.dates.map(d => {
-            const k = e.id + "|" + d;
-            const b = base[k], a = aft[k];
-            return {
-              before: b ? { label: b.shift_name, shift: b.shift_id } : null,
-              after: a ? { label: a.shift_name, shift: a.shift_id, color: colorOf(a) } : null,
-              changed: (b ? b.shift_id : null) !== (a ? a.shift_id : null)
-            };
-          });
-          return { id: e.id, name: e.name, cells, worked: cells.filter(c => c.after).length };
-        })
-      };
+      const rows = emps.map(e => {
+        const cells = p.dates.map(d => {
+          const k = e.id + "|" + d;
+          const b = base[k], a = aft[k];
+          return {
+            before: b ? { label: b.shift_name, shift: b.shift_id } : null,
+            after: a ? { label: a.shift_name, shift: a.shift_id, color: colorOf(a) } : null,
+            changed: (b ? b.shift_id : null) !== (a ? a.shift_id : null)
+          };
+        });
+        return { id: e.id, name: e.name, cells, worked: cells.filter(c => c.after).length };
+      });
+      const ws = rows.map(x => x.worked);
+      rows.forEach(x => {
+        x.heat = heatRatio(x.worked, ws);
+        x.heatColor = getHeatBgColor(x.worked, ws);
+        x.heatText = heatTextColor(x.heat);
+      });
+      return { dates: p.dates, rows: rows };
     });
 
     async function runWhatIf() {
       if (!run.value || !run.value.problem || wiLoading.value) return;
       wiLoading.value = true; wiError.value = ""; wi.value = null;
+      showWiDetail.value = false;
       try {
-        const r = await fetch("/api/agent/whatif", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ problem: run.value.problem, text: wiText.value })
-        });
-        const data = await r.json();
-        if (!r.ok) throw new Error(data.detail || ("HTTP " + r.status));
+        const data = await postJSON("/api/agent/whatif",
+          { problem: run.value.problem, text: wiText.value });
         wi.value = data;
         if (!data.ok && data.error) wiError.value = data.error;
       } catch (e) {
-        wiError.value = "对比失败：" + e.message;
+        wiError.value = "对比失败：" + (e && e.message ? e.message : e);
       } finally {
         wiLoading.value = false;
       }
     }
 
     function shiftColor(i) { return SHIFT_COLORS[i % SHIFT_COLORS.length]; }
+    /* ---- 工时热力（蓝系）：越深 = 这一周上班越多 ---- */
+
+    // 归一化：worked 在本方案「最闲~最忙」之间的位置（0~1）。全员天数一样时返回 0
+    function heatRatio(worked, allList) {
+      if (!allList || allList.length === 0) return 0;
+      const minW = Math.min.apply(null, allList);
+      const maxW = Math.max.apply(null, allList);
+      if (maxW === minW) return 0;
+      return (worked - minW) / (maxW - minW);
+    }
+
+    // 格子底色：浅蓝 #dbeafe → 深蓝 #1d4ed8
+    function getHeatBgColor(worked, allList) {
+      if (!allList || allList.length === 0) return "#ffffff";
+      const minW = Math.min.apply(null, allList);
+      const maxW = Math.max.apply(null, allList);
+      if (maxW === minW) return "#dbeafe"; // 所有人一样 → 统一浅蓝
+      const ratio = (worked - minW) / (maxW - minW);
+      const r = Math.round(219 * (1 - ratio) + 29 * ratio);
+      const g = Math.round(234 * (1 - ratio) + 78 * ratio);
+      const b = Math.round(254 * (1 - ratio) + 216 * ratio);
+      return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
+    // 格子里数字的颜色：底色变深就换白字，否则深蓝字
+    function heatTextColor(t) {
+      return t > 0.55 ? "#ffffff" : "#1e3a8a";
+    }
+
+    /* 条形用的实色版：从 blue-300 起步（浅端在灰轨道上也看得见）→ blue-900 */
+    function barColor(t) {
+      const v = Math.max(0, Math.min(1, t));
+      const r = Math.round(147 + (30 - 147) * v);
+      const g = Math.round(197 + (58 - 197) * v);
+      const b = Math.round(253 + (138 - 253) * v);
+      return "rgb(" + r + "," + g + "," + b + ")";
+    }
     function icon(s) {
       return { ok: "✓", warn: "!", error: "×", running: "…", pending: "" }[s] || "";
     }
@@ -552,8 +954,10 @@ createApp({
     });
 
     return { health, text, loading, run, error, samples, useSample, submit: submit,
-             matrix, shiftColor, icon, renderNarrative,
-             wi, wiText, wiLoading, wiError, wiSamples, runWhatIf, wiMatrix };
+             matrix, balance, wiBalance, shiftColor, barColor, icon, renderNarrative,
+             wi, wiText, wiLoading, wiError, wiSamples, runWhatIf, wiMatrix,
+             allWorkedList, getHeatBgColor,
+             skView, errInfo, wiErrInfo, showErrDetail, showWiDetail };
   }
 }).mount("#app");
 </script>
