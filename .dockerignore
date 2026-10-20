@@ -1,0 +1,42 @@
+# 构建镜像时排除的东西
+# 目的有两个：镜像变小；密钥绝不进镜像
+
+# ---- 密钥（最重要的一条）----
+.env
+**/.env
+*.env
+!**/.env.example
+
+# ---- 虚拟环境与依赖缓存 ----
+.venv/
+**/__pycache__/
+*.py[cod]
+.npm-cache/
+node_modules/
+
+# ---- 版本控制与 IDE ----
+.git/
+.gitignore
+.idea/
+.vscode/
+
+# ---- 文档与笔记（镜像里用不到）----
+docs/
+notes/
+*.md
+!backend/requirements*.txt
+
+# ---- 测试与基准产物 ----
+backend/benchmark/results/
+backend/smoke_test.py
+backend/check_key.py
+backend/preflight.py
+backend/demo_scheduling.py
+
+# ---- 系统垃圾 ----
+.DS_Store
+Thumbs.db
+pip-build-tracker-*/
+pip-install-*/
+pip-unpack-*/
+pip-ephem-wheel-cache-*/
