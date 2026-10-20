@@ -1,13 +1,6 @@
 # index.html（前端）与演示视频 —— 模块说明
 
-<!--
-> ⚠️ **使用说明**：本文由冯鸣按代码实际结构起草骨架，事实部分（文件、符号、接口、字段）已核对过滤。
-> **李芳青必须做的三件事**
-> 1. 逐条对照 `backend/app/static/index.html` 验证下面的说法，发现不对就改；
-> 2. 把 §3 的每个决策换成你自己的话重写一遍（现在这是第三人称描述，不像你写的）；
-> 3. **重写 §4「我还没搞懂的地方」**——那部分必须是你真实的困惑，我编不出来。
-> G1 验收时老师会挑一段让你现场讲，讲不顺就说明没消化。
--->
+> 李芳青 · 消化期产出 · 2026-10-20 · 561 行 · 对应技术文档第 5 章前端部分
 
 ---
 
@@ -114,3 +107,122 @@ what-if 是同一套思路的加强版（`wiMatrix`，第 483 行）：同时建
 | 5 | 决策说明文字 | §二 的 narrative 分支 |
 | 6 | what-if 输入「张伟下周只能上 2 天」，表格变色的两个格子 | §三 决策三 |
 | 7 | 收起，团队信息 | — |
+
+---
+
+# 六、5 个验收问题（答题骨架）
+
+> ✍️ **李芳青：下面每一条的「事实」部分是冯璐对着 `index.html` 核对过的，可以直接用；
+> 「你要写的」部分必须你自己补，而且**要用你自己的话**。G1 会挑一段让你现场讲。**
+>
+> 行号对应 `backend/app/static/index.html`（561 行）。
+
+---
+
+## Q1　页面一共几个区块？每个区块的数据分别来自后端返回的哪个字段？
+
+**事实**：左右两栏，左栏 6 块、右栏 5 块。
+
+| # | 区块 | 数据来源 | 行号 |
+| --- | --- | --- | --- |
+| ① | 用中文描述你的排班需求 | 本地 `text`（ref），不来自后端 | 178 |
+| ② | Agent 执行轨迹 | `run.steps[]` 的 `status` / `name` / `detail` / `duration_ms` | 194 |
+| ③ | 决策建议 | `run.narrative` → `renderNarrative()` | 210 |
+| ④ | 冲突诊断 | `run.result.conflicts[]` / `run.result.diagnosis` / `run.result.violations[]` | 215 |
+| ⑤ | 排班表 | `matrix`（computed）← `run.problem` + `run.result.assignments` | 230 |
+| ⑥ | 如果……会怎样（方案对比） | `wi`（`/api/agent/whatif` 的返回） | 261 |
+| 右1 | 关键指标 | `run.problem.employees.length` / `dates.length` / `run.result.assignments.length` / `run.result.solve_time_seconds` | 359 |
+| 右2 | 需要你确认 | `run.extraction.uncertainties[]` | 372 |
+| 右3 | 自动修补与提醒 | `run.warnings[]` | 380 |
+| 右4 | Agent 的理解 | `run.extraction.summary` | 385 |
+| 右5 | 工作原理 | 纯静态文案 | 390 |
+
+**你要写的**：一句话总结——「左栏是**一次运行的过程**（输入 → 轨迹 → 结论 → 表格 → 反问），右栏是**这次运行的元信息**（规模、置信度、修补记录）」。为什么这么分？
+
+---
+
+## Q2　`submit()` 里从点击到出结果，完整经过哪几步？出错时错误信息显示在哪？
+
+**事实**（`submit()` 在第 439–458 行）：
+
+1. **清场**：`loading=true`、清空 `error`、`run`、`wi`、`wiText`（439–440）
+2. **发请求**：`fetch("/api/agent/run", {method:"POST", body: JSON.stringify({text})})`（443–447）
+3. **解析**：`await r.json()`（448）
+4. **HTTP 层错误**：`!r.ok` → 抛 `data.detail` 或 `HTTP <status>`（449）
+5. **成功**：`run.value = data`（450），页面靠 Vue 的响应式自动重渲染
+6. **业务层错误**：HTTP 200 但 `data.ok === false` → `error.value = data.error`（451）
+7. **网络/异常**：`catch` → `error.value = "请求失败：" + e.message`（453）
+8. **收尾**：`finally` → `loading = false`（455）
+
+**错误显示在**：② 卡片里的 `<div class="alert err" v-if="error">`（第 196 行）。
+
+**你要写的**：为什么第 4 步和第 6 步要分开处理？（提示：一个是「接口没通」，一个是「接口通了但 Agent 内部失败」——对用户来说含义完全不同）
+
+---
+
+## Q3　`schedule_table_md` 是一段 Markdown 文本，前端是怎么把它变成排班表格的？
+
+> ⚠️ **这题的前提是错的，这是一个陷阱。**
+
+**事实**：`grep schedule_table_md index.html` → **零结果**。前端**根本没有用**这个字段。
+
+⑤ 排班表是这样来的：
+
+```
+run.result.assignments[]（扁平列表，28 条）
+        │  matrix（computed，第 459–481 行）
+        │  先用 employee_id + "|" + date 建哈希表，再按 problem.dates / problem.employees 的顺序取值
+        ▼
+{matrix: {dates[], shifts[], rows[{id, name, cells[], worked}]}}
+        │  模板里纯 v-for
+        ▼
+⑤ 的 <table class="sched">（第 230–256 行）
+```
+
+`schedule_table_md` 只给 **CLI / 需要复制文本**的场景用（`agent.py` 的 `_cli()` 会打印它）。
+
+**你要写的**：为什么前端不用现成的 Markdown 字符串、非要自己 reshape 一遍？
+（提示：Markdown 是给「看」的，不是给「算」的——表格里要标颜色、要算每人上班天数、what-if 还要逐格比对，字符串做不到）
+
+**这题的加分点**：主动指出「题目假设有误」，比硬编一个解释强得多——说明你真的读过代码。
+
+---
+
+## Q4　六步轨迹有 `ok / warn / error / running` 几种状态，界面上分别怎么表现？
+
+**事实**：
+
+- 状态值有 5 种：`pending` / `running` / `ok` / `warn` / `error`
+- 图标映射在 `icon(s)`（第 540 行）：
+
+```js
+{ ok: "✓", warn: "!", error: "×", running: "…", pending: "" }
+```
+
+- 颜色由 `<span class="dot" :class="s.status">`（第 199 行）驱动，`.dot.ok` / `.dot.warn` / `.dot.error` 各自一套 CSS
+- 耗时显示：`s.duration_ms ? s.duration_ms + ' ms' : ''`（第 201 行）——0 就不显示，所以「数据校验 0ms」那一行没有数字
+
+**你要写的**：`warn` 用 `!` 而不是 `×`，这个区分在业务上意味着什么？
+（提示：`warn` = 「这步没完全成功，但方案还能用」，比如决策说明生成失败不影响排班表；`error` = 「这步挂了，后面走不下去」）
+
+---
+
+## Q5　如果现在要加一个「工时热力图」，你会改哪几行？数据从哪取？
+
+**事实**：只需动 3 处，**不用改后端**。
+
+1. **加一个 computed**（放在 `matrix` 后面，约第 483 行）：
+   复用 `matrix.rows[].cells` 的结构，把每格从「有没有班」换成「工时数」
+2. **加一张卡片**（放在 ⑤ 排班表后面，约第 256 行）：
+   `v-for` 套同一个 `matrix.dates` / `matrix.rows`，单元格背景色按工时深浅
+3. **加一个 CSS class**（`<style>` 里，第 7–157 行之间）：
+   比如 `.heat-0` ~ `.heat-3` 四档
+
+**数据从哪取**：
+
+- 每格「有没有班」→ `run.result.assignments`（和 `matrix` 同源）
+- 每格「几小时」→ `run.problem.shifts[]` 的 `start_hour` / `end_hour`（早班 8–16 = 8 小时，晚班 16–24 = 8 小时）
+- 每人每周总工时 → 把该员工 7 天的格子加起来
+
+**你要写的**：为什么这个功能「不用改后端」？
+（提示：后端已经把所有原始数据都返回了——`assignments` 有谁哪天哪个班，`shifts` 有班次的起止时间。前端只是换一种**展示形状**，这正是 §三 决策二说的「前端只做形状转换」）
