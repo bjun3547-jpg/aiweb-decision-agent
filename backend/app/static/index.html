@@ -260,16 +260,29 @@
     header .sub{font-size:11.5px}
     .badges{margin-left:0; width:100%}
     textarea, input{font-size:16px} /* iOS 上 <16px 会自动放大页面 */
+    /* 示例需求在 390px 宽下要 8 行才放得下，104px 会把最后一行截成半截，
+       用户看不到「张伟周三请假」这种关键信息。这里给足高度。 */
+    textarea{min-height:172px}
     button{min-height:40px}
     button.primary{width:100%; padding:11px 18px}
     .row{gap:8px}
     .row button.chip{flex:1 1 auto; text-align:center}
     table.sched{min-width:480px; border-spacing:3px; font-size:11.5px}
+    /* 横向滑到右边看「上班/休息/工时」时，员工姓名列钉住不动，
+       否则整张表全是色块，看不出哪一行是谁 */
+    table.sched th.name, table.sched td.name{
+      position:sticky; left:0; z-index:2; background:var(--panel);
+      /* border-spacing 会在格子之间留 3px 缝，滑动时底下的色块会从缝里透出来，
+         用一圈同色投影把缝糊住（半径正好等于 border-spacing） */
+      box-shadow:0 0 0 3px var(--panel);
+    }
     .sk-row{grid-template-columns:44px repeat(7, minmax(0,1fr)) 30px}
     .kpi{grid-template-columns:repeat(2, minmax(0,1fr))}
     .cmp{grid-template-columns:repeat(2, minmax(0,1fr))}
     .legend{gap:8px 12px}
     .legend .heat-legend{margin-left:0; width:100%}
+    /* 「（全员 4 天 · 完全均衡）」不能被断成「完全均 / 衡）」 */
+    .legend .heat-legend b{white-space:nowrap}
     .wi-input{flex-direction:column}
     .wi-input input{width:100%}
     .wi-input button.primary{width:100%}
@@ -423,7 +436,7 @@
           </tbody>
         </table>
         </div>
-        <div class="scrolltip">← 左右滑动可查看全部日期 →</div>
+        <div class="scrolltip">← 左右滑动可查看「上班 / 休息 / 工时」→</div>
         <div class="legend">
           <span v-for="(s, i) in matrix.shifts" :key="s.id">
             <i :style="{background: shiftColor(i)}"></i>{{ s.name }}
