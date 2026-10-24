@@ -1,0 +1,5096 @@
+[
+  {
+    "id": "R01",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "5 人 · 1 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "5 个店员，每天 1 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R02",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "6 人 · 2 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "6 个店员，每天 2 个班次，每班 1 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R03",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "7 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "7 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R04",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "8 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "8 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R05",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "10 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E09",
+          "name": "吴婷",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E10",
+          "name": "徐磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "10 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R06",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "12 人 · 2 班 · 每班 3 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E09",
+          "name": "吴婷",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E10",
+          "name": "徐磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E11",
+          "name": "孙丽",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E12",
+          "name": "马超",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 3
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "12 个店员，每天 2 个班次，每班 3 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R07",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "7 人 · 1 班 · 每班 3 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 3
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "7 个店员，每天 1 个班次，每班 3 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R08",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "6 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "6 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R09",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "7 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": "收银",
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "7 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R10",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "8 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": "收银",
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 6,
+        "allow_understaffing": false
+      },
+      "source_text": "8 个店员，每天 2 个班次，每班 2 人，每人最多 6 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R11",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "12 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E09",
+          "name": "吴婷",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E10",
+          "name": "徐磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E11",
+          "name": "孙丽",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E12",
+          "name": "马超",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": "收银",
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "12 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R12",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "5 人 · 1 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "5 个店员，每天 1 个班次，每班 1 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R13",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "6 人 · 2 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": "收银",
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "6 个店员，每天 2 个班次，每班 1 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R14",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "9 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E09",
+          "name": "吴婷",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": "收银",
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "9 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R15",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "7 人 · 2 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "7 个店员，每天 2 个班次，每班 1 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R16",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "8 人 · 1 班 · 每班 4 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 4
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 4
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 4
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 4
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 4
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 4
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 4
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "8 个店员，每天 1 个班次，每班 4 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R17",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "10 人 · 2 班 · 每班 3 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E09",
+          "name": "吴婷",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E10",
+          "name": "徐磊",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": "收银",
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 3
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "10 个店员，每天 2 个班次，每班 3 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "R18",
+    "kind": "regular",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "6 人 · 2 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 5,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "6 个店员，每天 2 个班次，每班 2 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "B01",
+    "kind": "boundary",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "1 人 · 1 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 0,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "1 个店员，每天 1 个班次，每班 1 人，每人最多 5 天，每周至少休 0 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "B02",
+    "kind": "boundary",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "5 人 · 1 班 · 每班 3 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 3
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "5 个店员，每天 1 个班次，每班 3 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "B03",
+    "kind": "boundary",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "3 人 · 1 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [
+            "2026-10-19",
+            "2026-10-20",
+            "2026-10-21",
+            "2026-10-22",
+            "2026-10-23",
+            "2026-10-24",
+            "2026-10-25"
+          ],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "3 个店员，每天 1 个班次，每班 1 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "B04",
+    "kind": "boundary",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "3 人 · 2 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "收银",
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": "收银",
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "3 个店员，每天 2 个班次，每班 1 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "B05",
+    "kind": "boundary",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "6 人 · 1 班 · 每班 3 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 3
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "6 个店员，每天 1 个班次，每班 3 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "B06",
+    "kind": "boundary",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "10 人 · 2 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25",
+        "2026-10-26",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-10-32"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E08",
+          "name": "周杰",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E09",
+          "name": "吴婷",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E10",
+          "name": "徐磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-26",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-26",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-27",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-27",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-28",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-28",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-29",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-29",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-30",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-30",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-31",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-31",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-32",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-32",
+          "shift_id": "evening",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 1,
+        "max_consecutive_work_days": 6,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "10 个店员，每天 2 个班次，每班 1 人，每人最多 5 天，每周至少休 1 天"
+    },
+    "expect": {
+      "status": "OPTIMAL"
+    }
+  },
+  {
+    "id": "C01",
+    "kind": "conflict",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "7 人 · 2 班 · 每班 3 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E06",
+          "name": "赵磊",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E07",
+          "name": "孙悦",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 3
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 0,
+        "max_consecutive_work_days": 7,
+        "max_shifts_per_employee": 5,
+        "allow_understaffing": false
+      },
+      "source_text": "7 个店员，每天 2 个班次，每班 3 人，每人最多 5 天，每周至少休 0 天"
+    },
+    "expect": {
+      "status": "INFEASIBLE",
+      "conflicts": [
+        "demand",
+        "max_shifts"
+      ]
+    }
+  },
+  {
+    "id": "C02",
+    "kind": "conflict",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "3 人 · 1 班 · 每班 3 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [
+            "2026-10-19",
+            "2026-10-20",
+            "2026-10-21",
+            "2026-10-22",
+            "2026-10-23",
+            "2026-10-24",
+            "2026-10-25"
+          ],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 3
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 3
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 0,
+        "max_consecutive_work_days": 7,
+        "max_shifts_per_employee": 7,
+        "allow_understaffing": false
+      },
+      "source_text": "3 个店员，每天 1 个班次，每班 3 人，每人最多 7 天，每周至少休 0 天"
+    },
+    "expect": {
+      "status": "INFEASIBLE",
+      "conflicts": [
+        "demand",
+        "availability"
+      ]
+    }
+  },
+  {
+    "id": "C03",
+    "kind": "conflict",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "5 人 · 1 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 5,
+        "max_consecutive_work_days": 7,
+        "max_shifts_per_employee": 7,
+        "allow_understaffing": false
+      },
+      "source_text": "5 个店员，每天 1 个班次，每班 2 人，每人最多 7 天，每周至少休 5 天"
+    },
+    "expect": {
+      "status": "INFEASIBLE",
+      "conflicts": [
+        "demand",
+        "rest_days"
+      ]
+    }
+  },
+  {
+    "id": "C04",
+    "kind": "conflict",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "3 人 · 2 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        },
+        {
+          "id": "evening",
+          "name": "晚班",
+          "required_skill": null,
+          "start_hour": 16,
+          "end_hour": 24
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-19",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "evening",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "evening",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 0,
+        "max_consecutive_work_days": 1,
+        "max_shifts_per_employee": 7,
+        "allow_understaffing": false
+      },
+      "source_text": "3 个店员，每天 2 个班次，每班 1 人，每人最多 7 天，每周至少休 0 天"
+    },
+    "expect": {
+      "status": "INFEASIBLE",
+      "conflicts": [
+        "demand",
+        "max_consecutive"
+      ]
+    }
+  },
+  {
+    "id": "C05",
+    "kind": "conflict",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "5 人 · 1 班 · 每班 1 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E03",
+          "name": "王强",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E04",
+          "name": "刘洋",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E05",
+          "name": "陈静",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 1
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 1
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 0,
+        "max_consecutive_work_days": 7,
+        "max_shifts_per_employee": 0,
+        "allow_understaffing": false
+      },
+      "source_text": "5 个店员，每天 1 个班次，每班 1 人，每人最多 0 天，每周至少休 0 天"
+    },
+    "expect": {
+      "status": "INFEASIBLE",
+      "conflicts": [
+        "demand",
+        "max_shifts"
+      ]
+    }
+  },
+  {
+    "id": "C06",
+    "kind": "conflict",
+    "problem": {
+      "scenario": "scheduling",
+      "title": "2 人 · 1 班 · 每班 2 人",
+      "dates": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24",
+        "2026-10-25"
+      ],
+      "employees": [
+        {
+          "id": "E01",
+          "name": "张伟",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [
+            "2026-10-19",
+            "2026-10-20",
+            "2026-10-21",
+            "2026-10-22",
+            "2026-10-23",
+            "2026-10-24",
+            "2026-10-25"
+          ],
+          "preferred_off_dates": []
+        },
+        {
+          "id": "E02",
+          "name": "李娜",
+          "skills": [
+            "理货"
+          ],
+          "max_shifts": null,
+          "unavailable_dates": [],
+          "preferred_off_dates": []
+        }
+      ],
+      "shifts": [
+        {
+          "id": "morning",
+          "name": "早班",
+          "required_skill": null,
+          "start_hour": 8,
+          "end_hour": 16
+        }
+      ],
+      "demand": [
+        {
+          "date": "2026-10-19",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-20",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-21",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-22",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-23",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-24",
+          "shift_id": "morning",
+          "headcount": 2
+        },
+        {
+          "date": "2026-10-25",
+          "shift_id": "morning",
+          "headcount": 2
+        }
+      ],
+      "rules": {
+        "min_rest_days_per_week": 0,
+        "max_consecutive_work_days": 7,
+        "max_shifts_per_employee": 7,
+        "allow_understaffing": false
+      },
+      "source_text": "2 个店员，每天 1 个班次，每班 2 人，每人最多 7 天，每周至少休 0 天"
+    },
+    "expect": {
+      "status": "INFEASIBLE",
+      "conflicts": [
+        "demand",
+        "availability"
+      ]
+    }
+  }
+]
