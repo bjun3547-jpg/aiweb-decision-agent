@@ -80,8 +80,10 @@
 
 ### 3.2 安装
 
+**Windows：**
+
 ```powershell
-# 1) 建虚拟环境（注意：把临时目录指到工作区内，避免沙箱/权限问题）
+# 1) 建虚拟环境
 python -m venv .venv
 
 # 2) 安装依赖（国内建议用清华镜像）
@@ -89,20 +91,46 @@ python -m venv .venv
     -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
+**macOS / Linux：**
+
+```bash
+python3 -m venv .venv
+./.venv/bin/pip install -r backend/requirements.txt \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
 ### 3.3 配置 API Key
+
+**Windows：**
 
 ```powershell
 Copy-Item backend\.env.example backend\.env
 # 编辑 backend\.env，把 DEEPSEEK_API_KEY 换成你自己的（https://platform.deepseek.com/api_keys）
 ```
 
+**macOS / Linux：**
+
+```bash
+cp backend/.env.example backend/.env
+# 编辑 backend/.env，把 DEEPSEEK_API_KEY 换成你自己的（https://platform.deepseek.com/api_keys）
+```
+
 > `.env` 已在 `.gitignore` 中，**不会**被提交。仓库里只保留 `.env.example`。
 
 ### 3.4 启动
 
+**Windows：**
+
 ```powershell
 cd backend
 ..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+**macOS / Linux：**
+
+```bash
+cd backend
+../.venv/bin/python -m uvicorn app.main:app --reload --port 8000
 ```
 
 打开 **<http://127.0.0.1:8000>** 即可使用。API 文档在 <http://127.0.0.1:8000/docs>。
@@ -114,8 +142,14 @@ cd backend
 **没有 API Key？** 用离线样例模式：
 
 ```powershell
+# Windows
 $env:LLM_MOCK="1"
 ..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+```bash
+# macOS / Linux
+LLM_MOCK=1 ../.venv/bin/python -m uvicorn app.main:app --reload --port 8000
 ```
 
 **只想验证求解器（完全不联网）？**
@@ -124,6 +158,8 @@ $env:LLM_MOCK="1"
 cd backend
 ..\.venv\Scripts\python.exe demo_scheduling.py
 ```
+
+macOS / Linux 把最后一行换成 `../.venv/bin/python demo_scheduling.py`。
 
 会依次输出「约束合理 → 最优排班」和「约束冲突 → 自动诊断 + 松弛方案」两个完整案例。
 
