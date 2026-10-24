@@ -66,7 +66,7 @@ COST_PREFERENCE = 3
 RULE_ADVICE: dict[str, str] = {
     "demand": "降低该班次的人数需求，或增加可用人手。",
     "availability": "该员工当天被标记为不可用，可改为允许其上班，或把需求转给别人。",
-    "skill_match": "该班次要求的技能无人具备，需要给现有员工补技能，或降低技能要求。",
+    "skill_match": "该班次要求的技能无人具备，或具备该技能的人不足以覆盖需求，需要给现有员工补技能、增加会该技能的人手，或降低技能要求。",
     "max_shifts": "上调个人上班天数上限，或增加人手分摊。",
     "rest_days": "下调最少休息天数，或增加可用人力。",
     "max_consecutive": "上调连续工作天数上限，或插入轮换人员。",
@@ -88,11 +88,20 @@ def effective_cap(employee_cap: int | None, global_cap: int, n_days: int, min_re
     """一名员工在计划期内实际最多能承担多少个班。
 
     取「个人上限」与「最少休息天数形成的上限」的较小值。
+
+    注意 `max(1, ...)` 这个下界：休息天数是按「每 7 天」说的，如果计划期只有
+    1 天，`n_days - min_rest = 0` 会把所有人算成一天都不能上——等于「每周休 1 天」
+    这条规则让只排一天的班彻底排不出来。休息天数的本意是限制负荷，不是禁止上班，
+    所以窗口内至少留 1 天可工作。
     """
     cap = employee_cap if employee_cap is not None else global_cap
     cap = max(0, min(int(cap), n_days))
     if min_rest > 0:
-        rest_cap = max(0, n_days - min_rest) if n_days <= 7 else n_days - math.ceil(min_rest * n_days / 7)
+        rest_cap = (
+            max(1, n_days - min_rest)
+            if n_days <= 7
+            else max(1, n_days - math.ceil(min_rest * n_days / 7))
+        )
         cap = min(cap, int(rest_cap))
     return cap
 
@@ -368,15 +377,18 @@ def _build(
     min_rest = max(0, min(rules.min_rest_days_per_week, 7))
     if min_rest > 0:
         for window in _sliding_windows(dates, min(7, n_days)):
-            max_work = len(window) - min_rest
+            # 窗口内至少留 1 天可工作，与 effective_cap 的下界保持一致：
+            # 计划期只有 1~2 天时，「每周休 1 天」不该把窗口压成一天都不能上。
+            rest_here = min(min_rest, max(0, len(window) - 1))
+            max_work = len(window) - rest_here
             if max_work >= len(window):
                 continue
             for e in problem.employees:
                 load = sum(b.work[(e.id, d)] for d in window)
-                detail = f"{e.name} 在 {window[0]}~{window[-1]} 需至少休 {min_rest} 天"
+                detail = f"{e.name} 在 {window[0]}~{window[-1]} 需至少休 {rest_here} 天"
                 instance("rest_days", detail)
                 if soft:
-                    short = model.NewIntVar(0, min_rest, f"rest_short_{e.id}_{window[0]}")
+                    short = model.NewIntVar(0, rest_here, f"rest_short_{e.id}_{window[0]}")
                     model.Add(load <= max_work + short)
                     b.penalty_terms.append(short * PENALTY["rest_days"])
                     b.reporters.append(("rest_days", detail, short))
@@ -551,6 +563,71 @@ def _diagnose_conflicts(b: _Built, core: list[Any]) -> list[Conflict]:
     return conflicts
 
 
+def _skill_capacity_conflicts(
+    problem: SchedulingProblem, conflicts: list[Conflict]
+) -> list[Conflict]:
+    """技能产能预检：把「会收银的只有 1 个」从「人数不够」里拆出来。
+
+    为什么需要这一步：`skill_match` 是物理约束，永远不参与松弛，因此它不进
+    假设集，`_minimal_conflict_rules` 在结构上不可能报出它。后果是——当瓶颈
+    其实是「会某个技能的人太少」时，诊断会统一归因为「各班次人数满足需求」。
+
+    这对业务方是误导：人其实是够的，缺的是**会某个技能的人**。两种情况的
+    解法完全不同（加人 vs 培训/降要求），必须分开报。
+
+    判据是纯算术：某班次的需求人班 > 具备该技能的人最多能上的人班。
+    """
+    dates = set(problem.dates)
+    n_days = len(problem.dates)
+    rules = problem.rules
+    out = list(conflicts)
+    existing = {c.rule for c in out}
+
+    for shift in problem.shifts:
+        if not shift.required_skill or "skill_match" in existing:
+            continue
+
+        need = sum(
+            d.headcount
+            for d in problem.demand
+            if d.shift_id == shift.id and d.date in dates and d.headcount > 0
+        )
+        if need <= 0:
+            continue
+
+        qualified = [e for e in problem.employees if shift.required_skill in e.skills]
+        supply = sum(
+            max(
+                0,
+                effective_cap(
+                    e.max_shifts,
+                    rules.max_shifts_per_employee,
+                    n_days,
+                    rules.min_rest_days_per_week,
+                )
+                - len(set(e.unavailable_dates) & dates),
+            )
+            for e in qualified
+        )
+        if supply >= need:
+            continue
+
+        names = "、".join(e.name for e in qualified) if qualified else "无"
+        out.append(
+            Conflict(
+                rule="skill_match",
+                label=RULE_LABELS["skill_match"],
+                detail=(
+                    f"「{shift.name}」要求 {shift.required_skill}，会的人只有 {names}，"
+                    f"最多能上 {supply} 个班，而需求是 {need} 个班"
+                ),
+            )
+        )
+        existing.add("skill_match")
+
+    return out
+
+
 def _rules_of(b: _Built, core: list[Any]) -> list[str]:
     """只做字面量 → 规则名的映射，不做 Conflict 构造。"""
     return [c.rule for c in _diagnose_conflicts(b, core)]
@@ -684,6 +761,9 @@ def solve(
         except Exception:  # noqa: BLE001 - 诊断失败不应影响主流程
             pass
         conflicts = _conflicts_from_rules(built, candidates)
+
+    # 技能瓶颈不在松弛假设集里，必须单独补一条（详见该函数 docstring）
+    conflicts = _skill_capacity_conflicts(problem, conflicts)
 
     diagnosis = _explain(problem, conflicts)
 
