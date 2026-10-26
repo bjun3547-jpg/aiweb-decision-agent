@@ -386,17 +386,17 @@
         <div class="narrative" v-html="renderNarrative(run.narrative)"></div>
       </div>
 
-      <div class="card" style="margin-top:16px" v-if="run && run.result && run.result.conflicts && run.result.conflicts.length">
+      <div class="card" style="margin-top:16px" v-if="run && run.result && ((run.result.conflicts && run.result.conflicts.length) || run.result.diagnosis)">
         <h2>④ 冲突诊断</h2>
-        <div class="alert warn">
+        <div class="alert warn" v-if="run.result.conflicts && run.result.conflicts.length">
           <div>约束无法同时满足。下面这组规则互相冲突，去掉其中任意一条，剩下的都能满足：</div>
           <ul>
             <li v-for="c in run.result.conflicts" :key="c.rule"><b>{{ c.label }}</b><span v-if="c.detail"> —— {{ c.detail }}</span></li>
           </ul>
         </div>
-        <div class="alert info" v-if="run.result.diagnosis" style="white-space:pre-wrap">{{ run.result.diagnosis }}</div>
+        <div class="alert info" v-if="run.result.diagnosis" v-html="renderNarrative(run.result.diagnosis)"></div>
         <div class="alert err" v-if="run.result.violations && run.result.violations.length">
-          <div>以下是违反最小代价的近似方案，仍违反了这些规则：</div>
+          <div>下面给出的排班表是<strong>代价最小</strong>的近似方案，并非完全合规，它仍然违反了：</div>
           <ul><li v-for="(v, i) in run.result.violations" :key="i">{{ v }}</li></ul>
         </div>
       </div>
@@ -971,6 +971,7 @@ createApp({
       return String(t)
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/^[-·]\s+/gm, "· ")
         .replace(/\n/g, "<br />");
     }
 

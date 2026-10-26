@@ -653,13 +653,9 @@ def _explain(problem: SchedulingProblem, conflicts: list[Conflict]) -> str:
     gap = ca["gap"]
 
     if conflicts:
-        lines.append(
-            "这组约束**无法同时满足**。求解器定位到一组**最小冲突规则**"
-            "（去掉其中任意一条，剩下的规则都能满足）："
-        )
-        for c in conflicts:
-            suffix = f"（{c.detail}）" if c.detail else ""
-            lines.append(f"- **{c.label}**{suffix}")
+        # 冲突规则本身（label + detail）由界面「④ 冲突诊断」的黄框单独渲染，
+        # 这里不再重复列一遍，只留一句结论，避免同一条规则在页面上出现两次。
+        lines.append("这不是哪条规则写错了——每条单独看都合理，问题出在它们的组合。")
     else:
         lines.append("这组约束**无法同时满足**，但未能定位到单一规则，通常是多条规则叠加所致。")
 
