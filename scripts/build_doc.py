@@ -38,21 +38,22 @@ DIST = DOCS / "dist"
 CSS = """
 @page { size: A4; margin: 25mm; }
 body { font-family: "SimSun","宋体",serif; font-size: 12pt; line-height: 1.5; color: #000; }
-h1 { font-family: "SimHei","黑体",sans-serif; font-size: 16pt; text-align: center; margin: 0 0 12pt; }
-h2 { font-family: "SimHei","黑体",sans-serif; font-size: 14pt; margin: 12pt 0 6pt; }
-h3 { font-family: "SimHei","黑体",sans-serif; font-size: 12.5pt; margin: 9pt 0 4pt; }
-p { margin: 0 0 6pt; text-align: justify; }
-blockquote { margin: 0 0 8pt; padding: 5pt 8pt; border-left: 3pt solid #ccc;
+h1 { font-family: "SimHei","黑体",sans-serif; font-size: 16pt; text-align: center; margin: 0 0 10pt; }
+h2 { font-family: "SimHei","黑体",sans-serif; font-size: 14pt; margin: 9pt 0 4pt; }
+h3 { font-family: "SimHei","黑体",sans-serif; font-size: 12.5pt; margin: 7pt 0 3pt; }
+p { margin: 0 0 4pt; text-align: justify; }
+blockquote { margin: 0 0 6pt; padding: 4pt 7pt; border-left: 3pt solid #ccc;
              background: #f7f7f7; font-size: 10.5pt; }
 pre { font-family: Consolas,monospace; font-size: 7pt; line-height: 1.1;
-      background: #fafafa; border: 0.5pt solid #ddd; padding: 3pt; margin: 5pt 0;
+      background: #fafafa; border: 0.5pt solid #ddd; padding: 3pt; margin: 4pt 0;
       white-space: pre-wrap; }
 code { font-family: Consolas,monospace; font-size: 10pt; background: #f2f2f2; }
-table { border-collapse: collapse; width: 100%; margin: 5pt 0; font-size: 10pt; }
-th, td { border: 0.5pt solid #999; padding: 2.5pt 4pt; }
+table { border-collapse: collapse; width: 100%; margin: 4pt 0; font-size: 10pt; page-break-inside: avoid; }
+tr { page-break-inside: avoid; }
+th, td { border: 0.5pt solid #999; padding: 2pt 4pt; }
 th { background: #eee; font-family: "SimHei",sans-serif; }
-img { display: block; width: 100%; margin: 4pt auto 2pt; }
-p[align="center"] { text-align: center; font-size: 10pt; margin: 0 0 6pt; }
+img { display: block; max-width: 100%; max-height: 70mm; margin: 4pt auto 2pt; }
+p[align="center"] { text-align: center; font-size: 10pt; margin: 0 0 4pt; }
 hr { display: none; }
 math { font-size: 11pt; }
 .pagebreak { page-break-after: always; }
@@ -116,7 +117,9 @@ def main() -> int:
         if html.returncode != 0:
             print(f"✗ {p.name} 转换失败：{html.stderr[:300]}")
             return 1
-        parts.append(html.stdout)
+        # HTML 写在 docs/dist/ 下，而图片在 docs/img/ 里，相对 img/ 会解析成
+        # docs/dist/img/ 导致 404；统一改写成 ../img/ 才能正常显示。
+        parts.append(html.stdout.replace('src="img/', 'src="../img/'))
         if i < len(files) - 1:
             parts.append('<div class="pagebreak"></div>')
 
