@@ -20,6 +20,10 @@
 只想看各章字数 / 检查 pandoc 是否装了：
 
     .\\.venv\\Scripts\\python.exe scripts\\build_doc.py --check
+
+注意：脚本里只用 √ (U+221A) 和 × (U+00D7)，不用对勾 U+2713 和叉号 U+2717。
+Windows 控制台默认 GBK（cp936），这两个字符不在 cp936 里，print 出去会直接
+UnicodeEncodeError 崩掉；√ / × 在 cp936 和 UTF-8 里都有，两边都安全。
 """
 from __future__ import annotations
 
@@ -92,12 +96,12 @@ def main() -> int:
 
     pandoc = shutil.which("pandoc")
     if not pandoc:
-        print("\n✗ 没找到 pandoc。公式需要它才能渲染。")
+        print("\n× 没找到 pandoc。公式需要它才能渲染。")
         print("  Windows: winget install --id JohnMacFarlane.Pandoc")
         print("  macOS:   brew install pandoc")
         return 1
     ver = subprocess.run([pandoc, "--version"], capture_output=True, text=True).stdout.splitlines()[0]
-    print(f"\n✓ {ver}")
+    print(f"\n√ {ver}")
 
     if check_only:
         return 0
@@ -115,7 +119,7 @@ def main() -> int:
             capture_output=True, text=True, encoding="utf-8",
         )
         if html.returncode != 0:
-            print(f"✗ {p.name} 转换失败：{html.stderr[:300]}")
+            print(f"× {p.name} 转换失败：{html.stderr[:300]}")
             return 1
         # HTML 写在 docs/dist/ 下，而图片在 docs/img/ 里，相对 img/ 会解析成
         # docs/dist/img/ 导致 404；统一改写成 ../img/ 才能正常显示。
@@ -131,7 +135,7 @@ def main() -> int:
         + "</body></html>",
         encoding="utf-8",
     )
-    print(f"\n✓ 已生成 {out.relative_to(ROOT)}（{out.stat().st_size / 1024:.0f} KB）")
+    print(f"\n√ 已生成 {out.relative_to(ROOT)}（{out.stat().st_size / 1024:.0f} KB）")
     print("  用 Chrome 打开 → Ctrl+P → 另存为 PDF")
     print("  边距选「默认」，勾选「背景图形」，取消「页眉和页脚」")
     return 0
