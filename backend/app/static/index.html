@@ -95,6 +95,7 @@
   .alert.warn{background:#fffbeb; border-color:#fde68a; color:#92400e}
   .alert.err{background:#fef2f2; border-color:#fecaca; color:#991b1b}
   .alert.info{background:#eff6ff; border-color:#bfdbfe; color:#1e40af}
+  .alert.ok{background:#f0fdf4; border-color:#bbf7d0; color:#166534}
   .alert ul{margin:8px 0 0; padding-left:20px}
   .alert li{margin:3px 0}
   table.sched{width:100%; border-collapse:separate; border-spacing:4px; margin-top:6px}
@@ -386,8 +387,18 @@
         <div class="narrative" v-html="renderNarrative(run.narrative)"></div>
       </div>
 
-      <div class="card" style="margin-top:16px" v-if="run && run.result && ((run.result.conflicts && run.result.conflicts.length) || run.result.diagnosis)">
+      <div class="card" style="margin-top:16px" v-if="run && run.result">
         <h2>④ 冲突诊断</h2>
+        <!-- 无冲突时也要占住这一块：否则卡片编号会从 ③ 直接跳到 ⑤，
+             看的人容易以为「冲突诊断」这个功能根本没做 -->
+        <div class="alert ok"
+             v-if="!(run.result.conflicts && run.result.conflicts.length) && (run.result.status === 'OPTIMAL' || run.result.status === 'FEASIBLE')">
+          本次没有冲突——所有约束可以同时满足，求解器已经求出完整方案。
+        </div>
+        <div class="alert warn"
+             v-else-if="!(run.result.conflicts && run.result.conflicts.length)">
+          没有定位到具体的冲突规则，求解状态：{{ run.result.status }}。
+        </div>
         <div class="alert warn" v-if="run.result.conflicts && run.result.conflicts.length">
           <div>约束无法同时满足。下面这组规则互相冲突，去掉其中任意一条，剩下的都能满足：</div>
           <ul>
